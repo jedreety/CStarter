@@ -4,7 +4,8 @@
 ; Pour l'utilisateur seul, sans droits d'administrateur, dans %LOCALAPPDATA%\Programs\CStarter.
 ; Une mise à jour le lance sans fenêtre, avec /RELAUNCH=1 et /PROJECT=<dossier> : il relance
 ; alors l'interface sur ce projet. La désinstallation n'ouvre qu'une fenêtre, dont une case retire
-; aussi les bibliothèques et les réglages ; sans fenêtre, /COMPLET=1 fait de même.
+; aussi les bibliothèques et les réglages ; sans fenêtre, /COMPLET=1 fait de même. Les textes
+; suivent la langue de Windows, comme CStarter : le français s'il l'est, l'anglais sinon.
 
 #ifndef Version
   #error Version manquante : scripts/distribution.py la passe par /DVersion
@@ -38,6 +39,8 @@ ChangesEnvironment=yes
 CloseApplications=force
 RestartApplications=no
 ShowLanguageDialog=no
+; La langue de l'interface de Windows ; sans correspondance, la première de [Languages].
+LanguageDetectionMethod=uilanguage
 #ifdef SignedUninstaller
 ; Inno Setup écrit dans ce dossier le désinstalleur à signer, puis reprend sa signature.
 SignedUninstaller=yes
@@ -45,10 +48,31 @@ SignedUninstallerDir={#SignedUninstaller}
 #endif
 
 [Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
+[CustomMessages]
+english.AddToPath=Add cstarter to the PATH
+french.AddToPath=Ajouter cstarter au PATH
+english.StartMenu=Add CStarter to the Start menu and Windows search
+french.StartMenu=Ajouter CStarter au menu Démarrer et à la recherche Windows
+english.Launch=Launch CStarter
+french.Launch=Lancer CStarter
+english.UninstallTitle=Uninstall CStarter
+french.UninstallTitle=Désinstaller CStarter
+english.RemoveData=Also remove installed libraries and settings
+french.RemoveData=Supprimer aussi les bibliothèques installées et les réglages
+english.ProjectsKept=Projects are never touched.
+french.ProjectsKept=Les projets restent intacts.
+english.Uninstall=Uninstall
+french.Uninstall=Désinstaller
+english.Running=CStarter is open: close it, then try again.
+french.Running=CStarter est ouvert : fermez-le, puis recommencez.
+
 [Tasks]
-Name: "path"; Description: "Ajouter cstarter au PATH"
+Name: "path"; Description: "{cm:AddToPath}"
+Name: "startmenu"; Description: "{cm:StartMenu}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [InstallDelete]
 ; Les fichiers d'une version précédente ne se mêlent pas à ceux de la nouvelle.
@@ -64,10 +88,11 @@ Source: "..\..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignor
 Type: filesandordirs; Name: "{localappdata}\CStarter\mises-a-jour"
 
 [Icons]
-Name: "{autoprograms}\CStarter"; Filename: "{app}\cstarterw.exe"
+Name: "{autoprograms}\CStarter"; Filename: "{app}\cstarterw.exe"; Tasks: startmenu
+Name: "{autodesktop}\CStarter"; Filename: "{app}\cstarterw.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\cstarterw.exe"; Description: "Lancer CStarter"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\cstarterw.exe"; Description: "{cm:Launch}"; Flags: nowait postinstall skipifsilent
 Filename: "{app}\cstarterw.exe"; Parameters: "{code:Project}"; Flags: nowait; Check: Relaunching
 
 [Code]
@@ -160,7 +185,7 @@ var
 begin
   Form := CreateCustomForm(ScaleX(440), ScaleY(124), False, True);
   try
-    Form.Caption := 'Désinstaller CStarter';
+    Form.Caption := CustomMessage('UninstallTitle');
 
     Box := TNewCheckBox.Create(Form);
     Box.Parent := Form;
@@ -168,7 +193,7 @@ begin
     Box.Top := ScaleY(16);
     Box.Width := Form.ClientWidth - ScaleX(32);
     Box.Height := ScaleY(20);
-    Box.Caption := 'Supprimer aussi les bibliothèques installées et les réglages';
+    Box.Caption := CustomMessage('RemoveData');
 
     // Un dossier par ligne, raccourci au milieu s'il est trop long ; la fenêtre suit sa hauteur.
     Hint := TNewStaticText.Create(Form);
@@ -178,18 +203,18 @@ begin
     Hint.Font.Color := clGrayText;
     Width := Form.ClientWidth - Hint.Left - ScaleX(16);  // Hint, à taille automatique, n'a pas encore la sienne
     Hint.Caption := MinimizePathName(ExpandConstant('{%USERPROFILE}\.cstarter'), Hint.Font, Width) + #13#10 +
-      MinimizePathName(ExpandConstant('{%LOCALAPPDATA}\CStarter'), Hint.Font, Width) + #13#10 + 'Les projets restent intacts.';
+      MinimizePathName(ExpandConstant('{%LOCALAPPDATA}\CStarter'), Hint.Font, Width) + #13#10 + CustomMessage('ProjectsKept');
     Form.ClientHeight := Hint.Top + Hint.Height + ScaleY(16 + 23 + 14);
 
     Uninstall := TNewButton.Create(Form);
     Uninstall.Parent := Form;
-    Uninstall.Caption := 'Désinstaller';
+    Uninstall.Caption := CustomMessage('Uninstall');
     Uninstall.ModalResult := mrOk;
     Uninstall.Default := True;
 
     Cancel := TNewButton.Create(Form);
     Cancel.Parent := Form;
-    Cancel.Caption := 'Annuler';
+    Cancel.Caption := SetupMessage(msgButtonCancel);
     Cancel.ModalResult := mrCancel;
     Cancel.Cancel := True;
 
@@ -228,7 +253,7 @@ begin
   if not Confirmed then
     exit;
   while Running do
-    if MsgBox('CStarter est ouvert : fermez-le, puis recommencez.', mbInformation, MB_RETRYCANCEL) = IDCANCEL then
+    if MsgBox(CustomMessage('Running'), mbInformation, MB_RETRYCANCEL) = IDCANCEL then
       exit;
   Parameters := '/SILENT';
   if Complete then

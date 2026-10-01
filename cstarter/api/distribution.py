@@ -114,7 +114,17 @@ def install_update(installer: Path, relaunch: bool = False, project: Path | None
     arguments = [str(installer), "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/FORCECLOSEAPPLICATIONS"]
     if relaunch:
         arguments += ["/RELAUNCH=1", *([f"/PROJECT={project}"] if project is not None else [])]
-    subprocess.Popen(arguments, creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+    try:
+        subprocess.Popen(arguments, creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+    except OSError as error:
+        if getattr(error, "winerror", None) != 4551:  # une stratégie de contrôle des applications : Smart App Control
+            raise
+        raise CStarterError(
+            t(
+                f"Windows a bloqué l'installeur, qui n'est pas signé : réessayez dans un moment, ou installez-le depuis {RELEASES}/latest",
+                f"Windows blocked the installer, which is not signed: try again in a moment, or install it from {RELEASES}/latest",
+            )
+        ) from None
 
 
 def signer(path: Path) -> str | None:
