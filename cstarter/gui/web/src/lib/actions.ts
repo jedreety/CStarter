@@ -762,26 +762,52 @@ export async function reload(): Promise<void> {
   }
 }
 
-// La distribution : une version plus récente se prépare en arrière-plan,
-// et les prérequis manquants se montrent au premier lancement.
+// La distribution : une version plus récente se prépare en arrière-plan, et s'annonce dès que
+// Windows accepte de lancer son installeur ; tant qu'il le refuse, la page le lui redemande. Les
+// prérequis manquants se montrent au premier lancement.
 
 const PREREQUISITES_SHOWN = 'cstarter.prerequis';
+const UPDATE_RETRY = 120_000;
+let updateRetry: number | undefined;
+
+interface Prepared {
+  version: string;
+  ready: boolean;
+}
+
+function retryUpdate(): void {
+  window.clearTimeout(updateRetry);
+  updateRetry = window.setTimeout(prepareUpdate, UPDATE_RETRY);
+}
 
 async function prepareUpdate(): Promise<void> {
   try {
-    setState({ update: await call<string | null>('update_prepare') });
+    const prepared = await call<Prepared | null>('update_prepare');
+    if (prepared?.ready) setState({ update: prepared.version });
+    else if (prepared) retryUpdate();
   } catch {
     // update_prepare écrit déjà ses échecs dans l'onglet Sortie
   }
 }
 
-// Sur demande : la version prête s'annonce dans la barre de titre, sinon CStarter est à jour.
+// Sur demande : la version prête s'annonce dans la barre de titre ; celle que Windows n'accepte pas
+// encore s'annoncera d'elle-même ; sinon CStarter est à jour.
 export async function checkForUpdate(): Promise<void> {
   try {
-    const version = await call<string | null>('update_check');
-    setState({ update: version });
-    if (version) toast(t(`CStarter ${version} est prêt`, `CStarter ${version} is ready`), 'success', t('Mettre à jour, dans la barre de titre', 'Update, in the title bar'));
-    else toast(t('CStarter est à jour', 'CStarter is up to date'), 'success', getState().version);
+    const prepared = await call<Prepared | null>('update_check');
+    if (!prepared) {
+      toast(t('CStarter est à jour', 'CStarter is up to date'), 'success', getState().version);
+    } else if (prepared.ready) {
+      setState({ update: prepared.version });
+      toast(t(`CStarter ${prepared.version} est prêt`, `CStarter ${prepared.version} is ready`), 'success', t('Mettre à jour, dans la barre de titre', 'Update, in the title bar'));
+    } else {
+      toast(
+        t(`CStarter ${prepared.version} arrive`, `CStarter ${prepared.version} is coming`),
+        'info',
+        t('Windows vérifie encore son installeur : la mise à jour s’annoncera dès qu’il l’accepte', 'Windows is still checking its installer: the update will show up once it is accepted')
+      );
+      retryUpdate();
+    }
   } catch (error) {
     fail(error, t('Mise à jour indisponible', 'Update unavailable'));
   }

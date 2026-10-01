@@ -3,7 +3,7 @@
 Installé, CStarter est un dossier que PyInstaller a figé : cstarter.exe, la ligne de commande, et
 cstarterw.exe, l'interface. Chaque version se publie sur GitHub Releases, avec son installeur et
 latest.json. Une version plus récente se télécharge en HTTPS, empreinte et signature vérifiées,
-puis son installeur remplace CStarter sans fenêtre.
+puis son installeur, une fois que Windows accepte de le lancer, remplace CStarter sans fenêtre.
 """
 
 import contextlib
@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -35,6 +36,8 @@ _SYSTEM32 = Path(os.environ.get("SystemRoot", r"C:\Windows"), "System32")
 # Le sujet du certificat qui signe le fichier de CSTARTER_SIGNED, si sa signature est valide.
 _SUBJECT = "$s = Get-AuthenticodeSignature -LiteralPath $env:CSTARTER_SIGNED; if ($s.Status -eq 'Valid') { $s.SignerCertificate.Subject }"
 _CN = re.compile(r'CN=(?:"([^"]*)"|([^,]*))')
+_SUSPENDED = 0x00000004  # CREATE_SUSPENDED : le processus existe, rien de lui ne s'exécute
+_BLOCKED = 4551  # une stratégie de contrôle des applications refuse le fichier : Smart App Control
 
 
 def executable() -> Path | None:
@@ -117,14 +120,42 @@ def install_update(installer: Path, relaunch: bool = False, project: Path | None
     try:
         subprocess.Popen(arguments, creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
     except OSError as error:
-        if getattr(error, "winerror", None) != 4551:  # une stratégie de contrôle des applications : Smart App Control
+        if getattr(error, "winerror", None) != _BLOCKED:
             raise
         raise CStarterError(
             t(
-                f"Windows a bloqué l'installeur, qui n'est pas signé : réessayez dans un moment, ou installez-le depuis {RELEASES}/latest",
-                f"Windows blocked the installer, which is not signed: try again in a moment, or install it from {RELEASES}/latest",
+                "Windows bloque encore cet installeur, qui n'est pas signé : Smart App Control l'acceptera une fois que Microsoft l'aura évalué. Réessayez plus tard.",
+                "Windows still blocks this unsigned installer: Smart App Control will accept it once Microsoft has assessed it. Try again later.",
             )
         ) from None
+
+
+def installer_allowed(installer: Path) -> bool:
+    """Windows laisse-t-il lancer installer ? Smart App Control refuse un exécutable non signé tant
+    que Microsoft ne l'a pas évalué, de quelques minutes à quelques heures après sa publication, et un
+    refus peut rester attaché au fichier refusé. La question se pose donc sur une copie fraîche,
+    lancée suspendue puis tuée : rien de l'installeur ne s'exécute. Acceptée, la copie le remplace."""
+    probe = installer.with_name(f"{installer.stem}.{os.getpid()}.sonde{installer.suffix}")
+    shutil.copyfile(installer, probe)
+    try:
+        process = subprocess.Popen([str(probe)], creationflags=_SUSPENDED | subprocess.CREATE_NO_WINDOW)
+    except OSError as error:
+        probe.unlink(missing_ok=True)
+        if getattr(error, "winerror", None) != _BLOCKED:
+            raise
+        return False
+    process.kill()
+    process.wait()
+    os.replace(probe, installer)
+    return True
+
+
+def update_waiting(version: str) -> str:
+    """Pourquoi la version publiée ne s'installe pas encore : Windows refuse son installeur."""
+    return t(
+        f"Windows vérifie encore CStarter {version} : Smart App Control bloque une version non signée tant que Microsoft ne l'a pas évaluée, de quelques minutes à quelques heures après sa publication. Réessayez plus tard.",
+        f"Windows is still checking CStarter {version}: Smart App Control blocks an unsigned release until Microsoft has assessed it, a few minutes to a few hours after it is published. Try again later.",
+    )
 
 
 def signer(path: Path) -> str | None:

@@ -95,6 +95,7 @@ class Bridge:
         self._choice: tuple[str, list[str], list[str]] | None = None
         self._closing_confirmed = False
         self._installer: Path | None = None
+        self._waiting: tuple[str, Path] | None = None  # la version téléchargée, et son installeur
 
     # La fenêtre
 
@@ -556,21 +557,35 @@ class Bridge:
     # La distribution
 
     @_answer
-    def update_prepare(self) -> str | None:
-        """Télécharge en arrière-plan une version plus récente, et renvoie son numéro une fois prête,
-        sinon None. Une vérification manquée, hors ligne par exemple, ne fait qu'une ligne dans
-        l'onglet Sortie."""
+    def update_prepare(self) -> dict | None:
+        """Télécharge en arrière-plan une version plus récente : {"version", "ready"}, sinon None.
+        ready reste faux tant que Windows refuse de lancer son installeur ; la page rappelle alors
+        update_prepare, qui ne fait plus que le lui redemander, sans réseau. Une vérification manquée,
+        hors ligne par exemple, ne fait qu'une ligne dans l'onglet Sortie."""
         if api.update_disabled() is not None:
             return None
         try:
-            update = api.check_update()
-            if update is None:
-                return None
-            self._installer = api.download_update(update)
+            first = self._waiting is None
+            if first:
+                update = api.check_update()
+                if update is None:
+                    return None
+                self._waiting = (update.version, api.download_update(update))
+            prepared = self._probe()
         except (CStarterError, OSError) as error:  # OSError : un fichier verrouillé, par un antivirus par exemple
             print(t(f"mise à jour de CStarter : {error}", f"CStarter update: {error}"), file=sys.stderr)
             return None
-        return update.version
+        if first and not prepared["ready"]:
+            print(t(f"mise à jour de CStarter : {api.update_waiting(prepared['version'])}", f"CStarter update: {api.update_waiting(prepared['version'])}"), file=sys.stderr)
+        return prepared
+
+    def _probe(self) -> dict:
+        """La version téléchargée, prête dès que Windows accepte de lancer son installeur."""
+        version, installer = self._waiting
+        if not api.installer_allowed(installer):
+            return {"version": version, "ready": False}
+        self._installer = installer
+        return {"version": version, "ready": True}
 
     @_answer
     def update_install(self) -> None:
@@ -583,8 +598,8 @@ class Bridge:
         self._chrome.close()
 
     @_answer
-    def update_check(self) -> str | None:
-        """Comme update_prepare, sur demande : la version prête, None si CStarter est à jour. Une
+    def update_check(self) -> dict | None:
+        """Comme update_prepare, sur demande : {"version", "ready"}, None si CStarter est à jour. Une
         vérification impossible, ou désactivée, remonte à la page."""
         reason = api.update_disabled()
         if reason is not None:
@@ -593,8 +608,8 @@ class Bridge:
             update = api.check_update()
             if update is None:
                 return None
-            self._installer = api.download_update(update)
-        return update.version
+            self._waiting = (update.version, api.download_update(update))
+            return self._probe()
 
     @_answer
     def about(self) -> dict:

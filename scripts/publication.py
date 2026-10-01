@@ -8,7 +8,8 @@ où en est cette version.
    le pousse. GitHub Actions construit alors l'exécutable puis l'installeur, que SignPath signe
    chacun après approbation (.github/workflows/publication.yml), et les dépose dans un brouillon.
 2. Devant le brouillon : télécharge l'installeur et latest.json, vérifie leur version, leur nom,
-   l'empreinte et la signature ; puis, après confirmation, publie la release.
+   l'empreinte et la signature, attend que Windows accepte de lancer l'installeur (Smart App
+   Control) ; puis, après confirmation, publie la release.
 3. Publiée : attend que l'adresse fixe de latest.json serve cette version, puis fait ce que fera un
    CStarter plus ancien, dans un dossier jetable : trouver la version, télécharger l'installeur, en
    vérifier l'empreinte et la signature.
@@ -107,11 +108,26 @@ def _check_draft(assets: list[dict]) -> bool:
             problems.append(f"l'empreinte de {INSTALLER} n'est pas celle de latest.json")
         if release.PUBLISHERS and signed_by not in release.PUBLISHERS:
             problems.append(f"{INSTALLER} est signé par {signed_by or 'personne'}, et non par {', '.join(release.PUBLISHERS)}")
+        if not problems and not _windows_accepts(installer):
+            problems.append(f"Windows refuse encore {INSTALLER} après dix minutes : relance ce script plus tard, il publiera quand Windows l'acceptera")
     if problems:
         print("\n".join(problems))
         return False
     signature = f"signature de {signed_by}" if release.PUBLISHERS else "aucune signature exigée"
     print(f"Brouillon {TAG} vérifié : version, nom, empreinte, {signature}.")
+    return True
+
+
+def _windows_accepts(installer: Path) -> bool:
+    """Smart App Control refuse un installeur non signé tant que Microsoft ne l'a pas évalué : une
+    version ne se publie qu'une fois que Windows accepte ici de le lancer, sinon les CStarter
+    installés la trouveraient sans pouvoir l'installer. Dix minutes au plus."""
+    deadline = time.monotonic() + 600
+    while not release.installer_allowed(installer):
+        if time.monotonic() > deadline:
+            return False
+        print(f"Windows vérifie encore {installer.name} (Smart App Control)…", flush=True)
+        time.sleep(30)
     return True
 
 
