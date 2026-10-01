@@ -1,20 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="tile" x1="10" y1="4" x2="56" y2="62" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#aba9ff"/>
-      <stop offset="0.52" stop-color="#6c68f2"/>
-      <stop offset="1" stop-color="#2c9be6"/>
-    </linearGradient>
-    <linearGradient id="shine" x1="0" y1="2" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fff" stop-opacity="0.32"/>
-      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-    </linearGradient>
     <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="1.4" stdDeviation="1.4" flood-color="#15116b" flood-opacity="0.35"/>
     </filter>
   </defs>
-  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#tile)"/>
-  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#shine)"/>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#6c68f2"/>
   <rect x="2.5" y="2.5" width="59" height="59" rx="14.5" fill="none" stroke="#fff" stroke-opacity="0.22"/>
   <g filter="url(#lift)" fill="#fff" stroke="#fff">
     <path d="M 41.8 21.2 A 15.5 15.5 0 1 0 41.8 42.8" fill="none" stroke-width="7" stroke-linecap="round"/>
