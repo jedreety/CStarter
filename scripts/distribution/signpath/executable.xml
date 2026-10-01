@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La configuration d'artefact « executable » du projet CStarter dans SignPath : le dossier figé,
+     dont seuls les deux exécutables de CStarter se signent. Les DLL tierces restent telles que
+     leurs auteurs les publient. -->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file path="cstarter.exe">
+      <authenticode-sign/>
+    </pe-file>
+    <pe-file path="cstarterw.exe">
+      <authenticode-sign/>
+    </pe-file>
+  </zip-file>
+</artifact-configuration>

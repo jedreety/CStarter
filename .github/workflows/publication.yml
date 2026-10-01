@@ -1,0 +1,144 @@
+# La construction et la signature d'une version publiée de CStarter. Un tag v<version> poussé par
+# scripts/publication.py la déclenche : l'exécutable figé, que SignPath signe, puis l'installeur,
+# compilé autour de lui et signé à son tour, puis latest.json, déposés dans un brouillon de release.
+# Chaque signature attend l'approbation du mainteneur dans SignPath. scripts/publication.py vérifie
+# ensuite le brouillon, puis le publie.
+# Lancée à la main, elle construit sans signer, pour essai : l'installeur reste un artefact du run.
+# Les actions sont épinglées par commit.
+
+name: Publication
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+
+concurrency:
+  group: publication-${{ github.ref }}
+
+permissions:
+  contents: write
+  actions: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  publication:
+    runs-on: windows-2025
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13.15'
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+
+      - name: Le tag est la version de cstarter/__init__.py
+        if: github.event_name == 'push'
+        run: |
+          $version = python -c "import cstarter; print(cstarter.__version__)"
+          if ("v$version" -ne $env:GITHUB_REF_NAME) { throw "le tag $env:GITHUB_REF_NAME n'est pas la version $version" }
+
+      - name: Inno Setup 6.7.3
+        run: |
+          $installer = Join-Path $env:RUNNER_TEMP 'innosetup-6.7.3.exe'
+          Invoke-WebRequest 'https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe' -OutFile $installer
+          if ((Get-FileHash $installer -Algorithm SHA256).Hash -ne '9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732') { throw 'Inno Setup : empreinte inattendue' }
+          $process = Start-Process $installer -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', '/CURRENTUSER' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Inno Setup : installation en échec, code $($process.ExitCode)" }
+          Add-Content $env:GITHUB_PATH (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6')
+
+      - name: Outils de construction
+        run: python -m pip install --disable-pip-version-check -r scripts/distribution/requirements.txt
+
+      - name: Exécutable figé
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape executable
+
+      - name: Exécutable à signer
+        id: executable
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: executable
+          path: ${{ runner.temp }}\dist\CStarter\
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: Signature de l'exécutable
+        if: github.event_name == 'push'
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: CStarter
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: executable
+          github-artifact-id: ${{ steps.executable.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: ${{ runner.temp }}\signe\executable
+
+      - name: Exécutable signé à la place du figé
+        if: github.event_name == 'push'
+        run: |
+          Remove-Item "$env:RUNNER_TEMP\dist\CStarter" -Recurse -Force
+          Move-Item "$env:RUNNER_TEMP\signe\executable" "$env:RUNNER_TEMP\dist\CStarter"
+
+      - name: Installeur
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape installeur ${{ github.event_name == 'push' && '--signe' || '' }}
+
+      - name: Installeur à signer
+        id: installer
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: installeur
+          path: ${{ runner.temp }}\dist\CStarter-*-setup.exe
+          if-no-files-found: error
+
+      - name: Signature de l'installeur
+        if: github.event_name == 'push'
+        uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: CStarter
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: installeur
+          github-artifact-id: ${{ steps.installer.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: ${{ runner.temp }}\signe\installeur
+
+      - name: Installeur signé à la place du compilé
+        if: github.event_name == 'push'
+        run: Move-Item "$env:RUNNER_TEMP\signe\installeur\CStarter-*-setup.exe" "$env:RUNNER_TEMP\dist\" -Force
+
+      - name: latest.json
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape empreinte ${{ github.event_name == 'push' && '--signe' || '' }}
+
+      - name: Brouillon de release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = $env:GITHUB_REF_NAME.Substring(1)
+          gh release create $env:GITHUB_REF_NAME "$env:RUNNER_TEMP\dist\CStarter-$version-setup.exe" "$env:RUNNER_TEMP\dist\latest.json" --repo $env:GITHUB_REPOSITORY --draft --verify-tag --title "CStarter $version" --generate-notes
+
+      - name: Essai, sans signature
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: essai
+          path: |
+            ${{ runner.temp }}\dist\CStarter-*-setup.exe
+            ${{ runner.temp }}\dist\latest.json
+          if-no-files-found: error

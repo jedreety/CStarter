@@ -563,7 +563,7 @@ class Bridge:
             if update is None:
                 return None
             self._installer = api.download_update(update)
-        except CStarterError as error:
+        except (CStarterError, OSError) as error:  # OSError : un fichier verrouillé, par un antivirus par exemple
             print(t(f"mise à jour de CStarter : {error}", f"CStarter update: {error}"), file=sys.stderr)
             return None
         return update.version

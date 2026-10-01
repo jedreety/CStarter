@@ -33,6 +33,7 @@ def version_info(name: str) -> VSVersionInfo:
             StringStruct("FileDescription", "CStarter"),
             StringStruct("FileVersion", VERSION),
             StringStruct("InternalName", name),
+            StringStruct("LegalCopyright", "Copyright (c) 2026 jedreety"),
             StringStruct("OriginalFilename", f"{name}.exe"),
             StringStruct("ProductName", "CStarter"),
             StringStruct("ProductVersion", VERSION),
