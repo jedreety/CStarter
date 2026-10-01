@@ -1,0 +1,20 @@
+{
+  "platforms": [
+    "x64",
+    "ARM64"
+  ],
+  "startup_target": "App",
+  "sln_output": ".",
+  "global_defines": {
+    "FMT_HEADER_ONLY": null,
+    "SPDLOG_COMPILED_LIB": null,
+    "SPDLOG_SHARED_LIB": null,
+    "SPDLOG_USE_STD_FORMAT": null
+  },
+  "targets": [
+    {
+      "name": "App",
+      "depends_on": []
+    }
+  ]
+}

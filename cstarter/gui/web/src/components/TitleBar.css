@@ -1,0 +1,313 @@
+/* Posée sur la page, sans fond : les rayons, le prisme et la barre latérale montent jusqu'en haut. */
+.titlebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  height: var(--titlebar);
+  padding-left: 16px;
+}
+
+.titlebar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Le logo ouvre le menu de CStarter */
+.titlebar__logo {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: -4px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  transition:
+    background-color 150ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.titlebar__logo:hover,
+.titlebar__logo[aria-expanded='true'] {
+  background: var(--fill-2);
+}
+
+.titlebar__logo:active {
+  transform: scale(0.94);
+}
+
+.titlebar__project {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titlebar__dirty {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+
+.titlebar__branch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 550;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.titlebar__branch:hover {
+  background: var(--fill-2);
+  color: var(--text);
+}
+
+.titlebar__count {
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 16px;
+}
+
+.titlebar__center {
+  display: flex;
+  justify-content: center;
+}
+
+.titlebar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  min-width: 0;
+  height: 100%;
+}
+
+.titlebar__run {
+  cursor: pointer;
+}
+
+/* Le compte GitHub, en haut à droite de l'accueil : un bouton sans compte, son nom une fois connecté */
+.titlebar__github {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 12px 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 550;
+  white-space: nowrap;
+  transition:
+    background-color 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease;
+}
+
+button.titlebar__github:hover:not(:disabled) {
+  background: var(--fill-3);
+  box-shadow: 0 0 0 1px var(--hairline-strong) inset;
+  color: var(--text);
+}
+
+button.titlebar__github:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.titlebar__github--known {
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+}
+
+.titlebar__github--known svg {
+  color: var(--text-3);
+}
+
+.titlebar__update {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 11px 0 9px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 34%, transparent) inset;
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 600;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    scale 120ms var(--ease-out);
+}
+
+.titlebar__update:hover {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  color: #fff;
+}
+
+/* La pastille est animée par motion, qui garde sa transformation en ligne : l'appui passe par scale */
+.titlebar__update:active {
+  scale: 0.97;
+}
+
+.titlebar__update-version {
+  color: color-mix(in srgb, var(--accent-2) 70%, transparent);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.build {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+.build .glide-select__trigger {
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+/* Compiler, et ses variantes derrière la flèche : un seul bouton, coupé d'un filet */
+
+.split {
+  display: flex;
+}
+
+.split__main {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.split__more.btn--icon.btn--sm {
+  width: 24px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  box-shadow:
+    1px 0 0 rgba(0, 0, 0, 0.18) inset,
+    0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.split__more svg {
+  transition: transform 200ms var(--ease-out);
+}
+
+.split__more[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+/* Exécuter : le triangle vert de Visual Studio */
+.build__run:not(:disabled) svg {
+  color: var(--success);
+}
+
+.titlebar__vs {
+  color: var(--text-2);
+}
+
+.matrix {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 210px;
+  padding: 8px;
+  border-radius: 13px;
+  background: rgba(24, 24, 29, 0.94);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 18px 50px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(24px) saturate(160%);
+  transform-origin: top right;
+}
+
+.matrix__row {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 8px;
+}
+
+.matrix__row:hover {
+  background: var(--fill-1);
+}
+
+.matrix__config {
+  font-weight: 550;
+}
+
+.matrix__platform {
+  margin-left: 8px;
+  color: var(--text-3);
+}
+
+.window-controls {
+  display: flex;
+  align-self: stretch;
+}
+
+.window-controls__button {
+  width: 46px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font-family: 'Segoe Fluent Icons', 'Segoe MDL2 Assets';
+  font-size: 10px;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.window-controls__button:hover {
+  background: var(--fill-2);
+  color: var(--text);
+}
+
+.window-controls__button--close:hover {
+  background: #c42b1c;
+  color: #fff;
+}

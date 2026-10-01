@@ -1,0 +1,423 @@
+.git-init {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.git-init__lfs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-2);
+}
+
+.git-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.git-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 4px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.git-row--conflict {
+  background: linear-gradient(90deg, var(--danger-soft), transparent 70%);
+}
+
+.git-row__actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.git-state {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: 6px;
+  background: var(--fill-2);
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.git-state--M {
+  background: rgba(94, 200, 255, 0.13);
+  color: var(--sky);
+}
+
+.git-state--A,
+.git-state--new {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.git-state--D,
+.git-state--U {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.git-state--R,
+.git-state--C {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.git-path {
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-path__dir {
+  color: var(--text-3);
+}
+
+.git-path__name {
+  color: var(--text);
+}
+
+.git-path__from {
+  color: var(--text-4);
+}
+
+.check {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px var(--hairline-strong) inset;
+  color: var(--accent-ink);
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.check--on,
+.check--partial {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.check:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.check__mark {
+  display: grid;
+  place-items: center;
+}
+
+.check__bar {
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent-ink);
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.composer__message {
+  min-height: 84px;
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+.composer__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* La branche en titre, et son menu */
+
+.branch-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: -4px 0 -4px -10px;
+  padding: 4px 12px 4px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  letter-spacing: inherit;
+  transition:
+    background-color 160ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.branch-title:hover,
+.branch-title[aria-expanded='true'] {
+  background: var(--fill-1);
+}
+
+.branch-title:active {
+  transform: scale(0.99);
+}
+
+.branch-title__icon {
+  color: var(--accent-2);
+}
+
+.branch-title__chevron {
+  color: var(--text-3);
+  transition: transform 220ms var(--ease-out);
+}
+
+.branch-title[aria-expanded='true'] .branch-title__chevron {
+  transform: rotate(180deg);
+}
+
+.branches {
+  display: flex;
+  flex-direction: column;
+  max-height: 380px;
+  padding: 5px;
+  overflow-y: auto;
+}
+
+.branches__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 9px;
+}
+
+.branches__row:hover {
+  background: var(--fill-2);
+}
+
+.branches__name {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-weight: 550;
+  text-align: left;
+}
+
+.branches__name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.branches__name svg {
+  flex: none;
+  color: var(--text-3);
+}
+
+.branches__row--on .branches__name {
+  cursor: default;
+}
+
+.branches__row--on .branches__name svg {
+  color: var(--accent-2);
+}
+
+.branches__row:not(.branches__row--on) .btn {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.branches__row:hover .btn,
+.branches__row .btn:focus-visible {
+  opacity: 1;
+}
+
+.branches__new {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  margin-top: 5px;
+  padding: 0 10px;
+  border-top: 1px solid var(--hairline);
+  color: var(--text-3);
+}
+
+.branches__new input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.branches__new input::placeholder {
+  color: var(--text-4);
+  font-family: var(--font);
+  font-size: 13px;
+}
+
+/* Le remote, à côté de la branche : un clic change son adresse, ou en ajoute un */
+.git-remote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 420px;
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text-2);
+  font-size: 12px;
+  transition: background-color 140ms ease;
+}
+
+.git-remote:hover {
+  background: var(--fill-2);
+}
+
+.git-remote__name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.git-remote__url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-remote--none {
+  color: var(--accent-2);
+}
+
+/* Un fichier modifié : un clic montre ses modifications */
+.git-row__open {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.git-row__open:hover .git-path__name {
+  text-decoration: underline;
+  text-decoration-color: var(--text-3);
+  text-underline-offset: 3px;
+}
+
+/* L'historique : empreinte, sujet, auteur, date */
+.commit-row {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  min-height: 38px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 13px;
+}
+
+.commit-row__hash {
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+.commit-row__subject {
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit-row__author,
+.commit-row__date {
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* Les modifications d'un fichier, au format unifié de git */
+.diff {
+  max-height: 60vh;
+  margin: 0;
+  padding: 10px 0;
+  overflow: auto;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.diff__line {
+  display: block;
+  padding: 0 14px;
+  white-space: pre;
+}
+
+.diff__line--add {
+  background: var(--success-soft);
+  color: #8ff0c4;
+}
+
+.diff__line--del {
+  background: var(--danger-soft);
+  color: #ffadad;
+}
+
+.diff__line--hunk {
+  color: var(--accent-2);
+}
+
+.diff__line--meta {
+  color: var(--text-3);
+}
+
+.diff__line--same {
+  color: var(--text-2);
+}
+
+.diff__title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sheet__grid--remote {
+  grid-template-columns: 140px minmax(0, 1fr);
+}

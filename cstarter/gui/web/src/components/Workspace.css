@@ -1,0 +1,92 @@
+.workspace {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.workspace__main {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding-top: var(--titlebar);
+}
+
+.workspace__rays {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70%;
+  height: 72%;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse at top right, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at top right, black 30%, transparent 75%);
+}
+
+.workspace__scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.workspace__blur--top {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  height: 0;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.workspace__blur--on {
+  opacity: 1;
+}
+
+.workspace__blur--top .gradual-blur {
+  height: 3.2rem !important;
+}
+
+/* Une colonne centrée : en plein écran, les pages restent lisibles et au milieu de la fenêtre */
+.workspace__page {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 26px 48px 160px 52px;
+}
+
+.unsaved {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--panel-height, 38px) + 22px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(26, 26, 31, 0.86);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.09) inset,
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 18px 50px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(22px) saturate(170%);
+  translate: -50% 0;
+}
+
+.unsaved .kbd {
+  margin-left: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: none;
+  color: rgba(11, 11, 16, 0.55);
+}
+
+/* L'aperçu prend toute la largeur : son graphe est une toile */
+.workspace__page[data-page='overview'] {
+  max-width: none;
+  padding-bottom: 0;
+}

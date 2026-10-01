@@ -1,0 +1,124 @@
+.popover {
+  position: fixed;
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(36, 36, 42, 0.96) 0%, rgba(24, 24, 29, 0.97) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 22px 60px rgba(0, 0, 0, 0.55),
+    0 6px 18px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(28px) saturate(160%);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.menu__search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: none;
+  height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text-3);
+}
+
+.menu__search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--text);
+}
+
+.menu__search input::placeholder {
+  color: var(--text-4);
+}
+
+.menu__list {
+  min-height: 0;
+  padding: 5px;
+  overflow-y: auto;
+  outline: none;
+}
+
+.menu__group {
+  padding: 8px 10px 4px;
+  color: var(--text-3);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.menu__separated {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid var(--hairline);
+}
+
+.menu__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--text);
+  text-align: left;
+}
+
+.menu__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  background: var(--fill-3);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+.menu__icon,
+.menu__label,
+.menu__tag {
+  position: relative;
+}
+
+.menu__icon {
+  flex: none;
+  color: var(--accent-2);
+}
+
+.menu__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu__tag {
+  flex: none;
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+
+.menu__empty {
+  padding: 14px 12px;
+  color: var(--text-3);
+  text-align: center;
+}

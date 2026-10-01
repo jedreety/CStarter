@@ -1,0 +1,185 @@
+/* La toile et ses boutons de zoom, hors du masque qui efface ses bords */
+.graph-frame {
+  position: relative;
+  margin: 18px -48px 0 -52px;
+}
+
+.graph__zoom {
+  position: absolute;
+  right: 60px;
+  bottom: 18px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 11px;
+  background: rgba(26, 26, 31, 0.72);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  backdrop-filter: blur(14px);
+}
+
+/* Une toile sans bords : la grille de points suit le graphe quand on le déplace */
+.graph {
+  position: relative;
+  height: max(340px, calc(100vh - var(--titlebar) - 170px - var(--panel-height, 38px)));
+  overflow: hidden;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.075) 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  cursor: grab;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, black 58%, transparent 100%);
+  touch-action: none;
+}
+
+.graph:active {
+  cursor: grabbing;
+}
+
+.graph__node {
+  cursor: pointer;
+}
+
+.graph__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.graph__edges {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.graph__edge path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.5;
+  transition:
+    stroke 200ms ease,
+    opacity 200ms ease;
+}
+
+.graph__edge--entry path {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-dasharray: 3 5;
+}
+
+.graph__edge--lit path {
+  stroke: var(--accent-2);
+}
+
+.graph__edge--entry.graph__edge--lit path {
+  stroke: var(--sky);
+}
+
+.graph__edge--dim {
+  opacity: 0.25;
+}
+
+.graph__label {
+  fill: var(--text-3);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.graph__node {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+  text-align: left;
+  transition:
+    opacity 200ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease,
+    translate 220ms var(--ease-out);
+}
+
+/* Au survol, le nœud se soulève : translate se compose avec la transformation de son arrivée */
+.graph__node:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.045) 100%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent) inset,
+    0 14px 40px rgba(0, 0, 0, 0.45),
+    0 0 30px color-mix(in srgb, var(--accent) 16%, transparent);
+  translate: 0 -2px;
+}
+
+.graph__node--startup {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent) inset,
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    0 0 26px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.graph__node--entry {
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.graph__node--dim {
+  opacity: 0.35;
+}
+
+.graph__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--fill-2);
+  color: var(--accent-2);
+}
+
+.graph__node--entry .graph__icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--sky);
+}
+
+.graph__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.graph__name {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.graph__node--entry .graph__name {
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.graph__detail {
+  color: var(--text-3);
+  font-size: 11.5px;
+}
+
+.graph__node--entry .graph__detail {
+  font-family: var(--mono);
+  font-size: 10.5px;
+}

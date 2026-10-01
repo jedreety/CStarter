@@ -1,0 +1,164 @@
+.sidebar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar);
+  min-height: 0;
+  padding-top: var(--titlebar);
+  border-right: 1px solid var(--hairline);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018) 0%, rgba(255, 255, 255, 0.008) 100%);
+}
+
+.sidebar__scroll {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 12px 20px;
+  overflow-y: auto;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav--targets {
+  margin-top: 22px;
+}
+
+.nav__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 2px 0 10px;
+  margin-bottom: 2px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.nav__item:hover {
+  background: var(--fill-1);
+  color: var(--text);
+}
+
+.nav__item:active {
+  transform: scale(0.985);
+}
+
+.nav__item--on,
+.nav__item--on:hover {
+  background: none;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.nav__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.045) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.07) inset,
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.nav__icon,
+.nav__label,
+.nav__trailing,
+.nav__badge {
+  position: relative;
+}
+
+.nav__icon {
+  flex: none;
+  color: var(--text-3);
+  transition: color 150ms ease;
+}
+
+.nav__item:hover .nav__icon {
+  color: var(--text-2);
+}
+
+.nav__item--on .nav__icon,
+.nav__item--on:hover .nav__icon {
+  color: var(--accent-2);
+}
+
+.nav__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav__trailing {
+  flex: none;
+  color: var(--success);
+}
+
+.nav__badge {
+  flex: none;
+  min-width: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 18px;
+  text-align: center;
+}
+
+.nav__badge--danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.sidebar__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px 14px;
+  border-top: 1px solid var(--hairline);
+}
+
+.sidebar__foot .btn {
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* Le raccourci du terminal, au bout de son bouton */
+.sidebar__terminal > span {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+}

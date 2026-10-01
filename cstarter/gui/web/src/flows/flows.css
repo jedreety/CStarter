@@ -1,0 +1,140 @@
+.flow__folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  color: var(--text-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow__folder-icon {
+  flex: none;
+  color: var(--text-4);
+}
+
+/* Un long chemin se coupe au début : la fin, le dossier lui-même, reste visible */
+.flow__folder-path {
+  min-width: 0;
+  overflow: hidden;
+  direction: rtl;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.flow__targets {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--hairline);
+}
+
+.flow__target {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.flow__target-text {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.flow__target-name {
+  font-weight: 600;
+}
+
+.flow__target-folder {
+  color: var(--text-3);
+}
+
+.flow__target-links {
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.flow__notes {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--warning-soft);
+  color: var(--text-2);
+  font-size: 12.5px;
+}
+
+.flow__notes--neutral {
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+.flow__notes-title {
+  margin-bottom: 6px;
+  color: var(--warning);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.flow__notes--neutral .flow__notes-title {
+  color: var(--text-2);
+}
+
+.flow__notes ul {
+  margin: 0;
+  padding-left: 16px;
+  line-height: 1.6;
+}
+
+/* Un dossier à choisir : toute la ligne ouvre la boîte de Windows */
+
+.flow__pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-m);
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text);
+  text-align: left;
+  transition:
+    background-color 140ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.flow__pick:hover {
+  background: var(--fill-2);
+}
+
+.flow__pick:active {
+  transform: scale(0.99);
+}
+
+.flow__pick span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow__pick-icon {
+  flex: none;
+  color: var(--accent-2);
+}
+
+.flow__pick--empty {
+  color: var(--text-3);
+}
