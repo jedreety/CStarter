@@ -240,8 +240,13 @@ button.titlebar__github:disabled {
   color: var(--success);
 }
 
-.titlebar__vs {
+.titlebar__editor .btn {
   color: var(--text-2);
+}
+
+/* La flèche d'un bouton discret, sans l'ombre de celle de Compiler */
+.titlebar__editor .split__more.btn--icon.btn--sm {
+  box-shadow: none;
 }
 
 .matrix {

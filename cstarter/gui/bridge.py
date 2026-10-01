@@ -379,6 +379,10 @@ class Bridge:
         os.startfile(solution)
 
     @_answer
+    def open_vscode(self) -> None:
+        api.open_in_vscode(self._require_saved())
+
+    @_answer
     def reveal(self) -> None:
         os.startfile(self._require_root())
 

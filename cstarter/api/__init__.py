@@ -53,6 +53,7 @@ from cstarter.api.project import (
     generate,
     get_program,
     get_project,
+    open_in_vscode,
     remove_old_files,
     run,
     save_project,

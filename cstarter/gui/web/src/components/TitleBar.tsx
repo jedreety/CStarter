@@ -1,13 +1,14 @@
 // La barre de titre, dessinée par la page : Windows la fait glisser et ancre la fenêtre (Aero Snap)
 // par bridge.py, dès que le pointeur a bougé de quelques pixels. Un double clic agrandit ou restaure.
 // Le logo ouvre le menu de CStarter : sa langue, ses outils, ses mises à jour. Au centre, compiler et
-// exécuter ; à droite, ouvrir la solution dans Visual Studio. Sans projet ouvert, à droite, le compte
-// GitHub, ou de quoi se connecter.
+// exécuter ; à droite, ouvrir le projet dans Visual Studio ou VS Code. Sans projet ouvert, à droite,
+// le compte GitHub, ou de quoi se connecter.
 
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   ArrowDown01Icon,
+  CodeIcon,
   GitBranchIcon,
   GithubIcon,
   HammerIcon,
@@ -33,6 +34,7 @@ import {
   installUpdate,
   navigate,
   openInVisualStudio,
+  openInVSCode,
   requestClose,
   runSelected,
   selectPair,
@@ -111,9 +113,7 @@ export default function TitleBar() {
         <UpdateChip />
         <RunChip />
         {project ? (
-          <Button tone="ghost" size="sm" icon={SquareArrowUpRightIcon} onClick={openInVisualStudio} className="titlebar__vs">
-            Visual Studio
-          </Button>
+          <EditorButton />
         ) : view && !view.root ? (
           <GithubAccount />
         ) : null}
@@ -148,6 +148,56 @@ function GithubAccount() {
         </motion.button>
       ) : null}
     </AnimatePresence>
+  );
+}
+
+// Ouvrir le projet dans un éditeur : Visual Studio, sur sa solution, ou VS Code, sur son dossier. Le
+// bouton ouvre le dernier choisi dans le menu de sa flèche, que ce navigateur garde.
+type Editor = 'visualstudio' | 'vscode';
+const EDITOR = 'cstarter.editeur';
+const EDITORS: Record<Editor, { label: string; icon: typeof CodeIcon; open: () => Promise<void> }> = {
+  visualstudio: { label: 'Visual Studio', icon: SquareArrowUpRightIcon, open: openInVisualStudio },
+  vscode: { label: 'VS Code', icon: CodeIcon, open: openInVSCode }
+};
+
+function savedEditor(): Editor {
+  try {
+    return localStorage.getItem(EDITOR) === 'vscode' ? 'vscode' : 'visualstudio';
+  } catch {
+    return 'visualstudio';
+  }
+}
+
+function EditorButton() {
+  const more = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  const [editor, setEditor] = useState<Editor>(savedEditor);
+  const choose = (value: Editor) => {
+    setEditor(value);
+    try {
+      localStorage.setItem(EDITOR, value);
+    } catch {
+      // sans stockage, le bouton revient à Visual Studio au prochain lancement
+    }
+    EDITORS[value].open();
+  };
+  return (
+    <div className="split titlebar__editor no-drag">
+      <Button tone="ghost" size="sm" icon={EDITORS[editor].icon} onClick={() => EDITORS[editor].open()} className="split__main">
+        {EDITORS[editor].label}
+      </Button>
+      <Button ref={more} tone="ghost" size="sm" icon={ArrowDown01Icon} title={t('Ouvrir dans', 'Open in')} onClick={() => setOpen(!open)} expanded={open} className="split__more" />
+      <Popover anchor={more} open={open} onClose={close} width={200} align="end">
+        <Menu
+          items={(Object.keys(EDITORS) as Editor[]).map(value => ({ value, label: EDITORS[value].label, icon: value === editor ? Tick02Icon : EDITORS[value].icon }))}
+          onSelect={value => {
+            setOpen(false);
+            choose(value as Editor);
+          }}
+        />
+      </Popover>
+    </div>
   );
 }
 
