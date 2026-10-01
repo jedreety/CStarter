@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- La configuration d'artefact « executable » du projet CStarter dans SignPath : le dossier figé,
-     dont seuls les deux exécutables de CStarter se signent. Les DLL tierces restent telles que
-     leurs auteurs les publient. -->
+     dont seuls les deux exécutables de CStarter se signent, et le désinstalleur qu'Inno Setup a
+     écrit pour qu'on le signe. Les DLL tierces restent telles que leurs auteurs les publient. -->
 <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
   <zip-file>
-    <pe-file path="cstarter.exe">
+    <pe-file path="CStarter/cstarter.exe">
       <authenticode-sign/>
     </pe-file>
-    <pe-file path="cstarterw.exe">
+    <pe-file path="CStarter/cstarterw.exe">
+      <authenticode-sign/>
+    </pe-file>
+    <pe-file path="desinstalleur/uninst-*.exe">
       <authenticode-sign/>
     </pe-file>
   </zip-file>
