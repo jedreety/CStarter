@@ -10,12 +10,6 @@ Describe your project once, in a few small JSON files.<br>
 CStarter writes the Visual Studio solution, builds it and runs it.<br>
 Your libraries come along.
 
-<br>
-
-<a href="https://github.com/jedreety/CStarter/releases/latest"><img src=".github/images/telecharger-en.png" width="312" alt="Download for Windows"></a>
-
-<br>
-
 [![Latest version](https://img.shields.io/github/v/release/jedreety/CStarter?style=flat-square&label=version&color=8e8cff)](https://github.com/jedreety/CStarter/releases/latest)
 [![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%C2%B7%2011-2c9be6?style=flat-square)](#install)
 [![MIT license](https://img.shields.io/badge/license-MIT-3ddc97?style=flat-square)](LICENSE)
