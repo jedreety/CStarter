@@ -1034,7 +1034,10 @@ def _update(args: argparse.Namespace) -> None:
         return
     print(t(f"Téléchargement de CStarter {update.version}…", f"Downloading CStarter {update.version}…"))
     sys.stdout.flush()
-    api.install_update(api.download_update(update))
+    installer = api.download_update(update)
+    if not api.installer_allowed(installer):
+        raise CStarterError(api.update_waiting(update.version))
+    api.install_update(installer)
     print(
         t(
             f"L'installeur remplace CStarter {api.VERSION} par {update.version}.",

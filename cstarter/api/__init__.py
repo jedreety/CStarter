@@ -17,7 +17,16 @@ from cstarter.api.dependencies import (
     remove_dependency,
     unlink_dependency,
 )
-from cstarter.api.distribution import VERSION, check_update, download_update, executable, install_update, update_disabled
+from cstarter.api.distribution import (
+    VERSION,
+    check_update,
+    download_update,
+    executable,
+    install_update,
+    installer_allowed,
+    update_disabled,
+    update_waiting,
+)
 from cstarter.api.git import (
     add,
     branch,
