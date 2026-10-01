@@ -55,9 +55,11 @@ gui = Analysis(
     datas=[(str(ROOT / "cstarter" / "gui" / "web" / "dist"), "cstarter/gui/web/dist")],
     excludes=EXCLUDES,
 )
-# Ce qui ne sert jamais à CStarter, pour Windows x64 et WebView2 : les binaires x86 et ARM64 des
-# paquets, l'interop du moteur Internet Explorer de pywebview, et son archive Android.
-UNUSED = ("/x86/", "/win-x86/", "/win-arm64/", "WebBrowserInterop.", "pywebview-android.jar")
+# Ce qui ne sert jamais à CStarter, pour Windows x64 et WebView2 : la DLL x86 de clr_loader,
+# l'interop du moteur Internet Explorer de pywebview, et son archive Android. Les dossiers
+# runtimes/win-* de pywebview restent tous : il les ajoute au PATH à son chargement, et s'arrête
+# s'il en manque un.
+UNUSED = ("/x86/", "WebBrowserInterop.", "pywebview-android.jar")
 
 
 def used(entries: list) -> list:
