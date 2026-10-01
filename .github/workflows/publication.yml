@@ -4,8 +4,9 @@
 # latest.json, déposés dans un brouillon de release. Chacune des deux signatures attend
 # l'approbation du mainteneur dans SignPath. scripts/publication.py vérifie ensuite le brouillon,
 # puis le publie.
-# Lancée à la main, elle construit sans signer, pour essai : l'installeur reste un artefact du run.
-# Les actions sont épinglées par commit.
+# Tant que SignPath n'est pas réglé (variable SIGNPATH_ORGANIZATION_ID absente), le brouillon est
+# construit sans signature. Lancée à la main, elle construit sans signer, pour essai : l'installeur
+# reste un artefact du run. Les actions sont épinglées par commit.
 
 name: Publication
 
@@ -29,6 +30,9 @@ jobs:
   publication:
     runs-on: windows-2025
     timeout-minutes: 180
+    env:
+      # Signer : une version poussée, et SignPath réglé.
+      SIGNE: ${{ github.event_name == 'push' && vars.SIGNPATH_ORGANIZATION_ID != '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -68,7 +72,7 @@ jobs:
 
       - name: Exécutable et désinstalleur à signer
         id: executable
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: executable
@@ -79,7 +83,7 @@ jobs:
           if-no-files-found: error
 
       - name: Signature de l'exécutable et du désinstalleur
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -93,7 +97,7 @@ jobs:
           output-artifact-directory: ${{ runner.temp }}\signe\executable
 
       - name: Exécutable et désinstalleur signés à la place des leurs
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         run: |
           foreach ($folder in 'CStarter', 'desinstalleur') {
             Remove-Item "$env:RUNNER_TEMP\dist\$folder" -Recurse -Force
@@ -101,11 +105,11 @@ jobs:
           }
 
       - name: Installeur
-        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape installeur ${{ github.event_name == 'push' && '--signe' || '' }}
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape installeur ${{ env.SIGNE == 'true' && '--signe' || '' }}
 
       - name: Installeur à signer
         id: installer
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: installeur
@@ -113,7 +117,7 @@ jobs:
           if-no-files-found: error
 
       - name: Signature de l'installeur
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -127,11 +131,11 @@ jobs:
           output-artifact-directory: ${{ runner.temp }}\signe\installeur
 
       - name: Installeur signé à la place du compilé
-        if: github.event_name == 'push'
+        if: env.SIGNE == 'true'
         run: Move-Item "$env:RUNNER_TEMP\signe\installeur\CStarter-*-setup.exe" "$env:RUNNER_TEMP\dist\" -Force
 
       - name: latest.json
-        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape empreinte ${{ github.event_name == 'push' && '--signe' || '' }}
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape empreinte ${{ env.SIGNE == 'true' && '--signe' || '' }}
 
       - name: Brouillon de release
         if: github.event_name == 'push'

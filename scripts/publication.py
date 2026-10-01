@@ -81,7 +81,8 @@ def _tag() -> int:
     _run("git", "tag", "--annotate", TAG, "--message", f"CStarter {VERSION}")
     _run("git", "push", "--quiet", "origin", TAG)
     print(f"La construction démarre : https://github.com/{REPOSITORY}/actions")
-    print("Approuve dans SignPath ses deux demandes de signature : l'exécutable, puis l'installeur.")
+    if release.PUBLISHERS:
+        print("Approuve dans SignPath ses deux demandes de signature : les exécutables et le désinstalleur, puis l'installeur.")
     print("Quand le brouillon de release est prêt, relance : python scripts/publication.py")
     return 0
 
@@ -109,7 +110,8 @@ def _check_draft(assets: list[dict]) -> bool:
     if problems:
         print("\n".join(problems))
         return False
-    print(f"Brouillon {TAG} vérifié : version, nom, empreinte, et signature de {signed_by}.")
+    signature = f"signature de {signed_by}" if release.PUBLISHERS else "aucune signature exigée"
+    print(f"Brouillon {TAG} vérifié : version, nom, empreinte, {signature}.")
     return True
 
 
@@ -134,8 +136,9 @@ def _check_published() -> int:
         if update is None or update.version != VERSION:
             print(f"un CStarter plus ancien trouve {update.version if update else 'rien'}, et non {VERSION}")
             return 1
-        installer = release.download_update(update)  # empreinte et signature vérifiées
-        print(f"Vérifié comme un CStarter plus ancien : {installer.name} trouvé, téléchargé, empreinte et signature correctes.")
+        installer = release.download_update(update)  # empreinte, et signature si PUBLISHERS en exige une
+        checked = "empreinte et signature correctes" if release.PUBLISHERS else "empreinte correcte"
+        print(f"Vérifié comme un CStarter plus ancien : {installer.name} trouvé, téléchargé, {checked}.")
     print(f"CStarter {VERSION} est publié : https://github.com/{REPOSITORY}/releases/tag/{TAG}")
     return 0
 
