@@ -45,12 +45,23 @@ def version_info(name: str) -> VSVersionInfo:
     )
 
 
-cli = Analysis([str(ROOT / "cstarter" / "__main__.py")], pathex=[str(ROOT)])
+# setuptools n'arrive que par les modules de cffi qui compilent des extensions : CStarter n'en
+# compile aucune.
+EXCLUDES = ["setuptools", "pkg_resources", "_distutils_hack"]
+cli = Analysis([str(ROOT / "cstarter" / "__main__.py")], pathex=[str(ROOT)], excludes=EXCLUDES)
 gui = Analysis(
     [str(ROOT / "cstarter" / "gui" / "__main__.py")],
     pathex=[str(ROOT)],
     datas=[(str(ROOT / "cstarter" / "gui" / "web" / "dist"), "cstarter/gui/web/dist")],
+    excludes=EXCLUDES,
 )
+# Ce qui ne sert jamais à CStarter, pour Windows x64 et WebView2 : les binaires x86 et ARM64 des
+# paquets, l'interop du moteur Internet Explorer de pywebview, et son archive Android.
+UNUSED = ("/x86/", "/win-x86/", "/win-arm64/", "WebBrowserInterop.", "pywebview-android.jar")
+
+
+def used(entries: list) -> list:
+    return [entry for entry in entries if not any(part in entry[0].replace("\\", "/") for part in UNUSED)]
 cli_exe = EXE(
     PYZ(cli.pure),
     cli.scripts,
@@ -71,4 +82,4 @@ gui_exe = EXE(
     console=False,
     upx=False,
 )
-COLLECT(cli_exe, gui_exe, cli.binaries, cli.datas, gui.binaries, gui.datas, name="CStarter", upx=False)
+COLLECT(cli_exe, gui_exe, used(cli.binaries), used(cli.datas), used(gui.binaries), used(gui.datas), name="CStarter", upx=False)

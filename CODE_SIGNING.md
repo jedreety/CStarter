@@ -4,7 +4,7 @@ Free code signing provided by [SignPath.io](https://about.signpath.io/), certifi
 
 ## English
 
-Published releases of CStarter, its executables and its installer, are signed by SignPath Foundation. They are built by GitHub Actions from this repository's source code ([`.github/workflows/publication.yml`](.github/workflows/publication.yml)), and every signing request is approved by hand. Third-party libraries shipped inside the installer keep the signature, or the lack of one, that their authors gave them.
+Published releases of CStarter, its executables, its uninstaller and its installer, are signed by SignPath Foundation. They are built by GitHub Actions from this repository's source code ([`.github/workflows/publication.yml`](.github/workflows/publication.yml)), and every signing request is approved by hand. Third-party libraries shipped inside the installer keep the signature, or the lack of one, that their authors gave them.
 
 Team roles:
 
@@ -16,7 +16,7 @@ Privacy: CStarter collects no data and sends no telemetry. When its window start
 
 ## Français
 
-Les versions publiées de CStarter, ses exécutables et son installeur, sont signées par SignPath Foundation. GitHub Actions les construit à partir des sources de ce dépôt ([`.github/workflows/publication.yml`](.github/workflows/publication.yml)), et chaque demande de signature est approuvée à la main. Les bibliothèques tierces livrées dans l'installeur gardent la signature, ou l'absence de signature, que leurs auteurs leur ont donnée.
+Les versions publiées de CStarter, ses exécutables, son désinstalleur et son installeur, sont signées par SignPath Foundation. GitHub Actions les construit à partir des sources de ce dépôt ([`.github/workflows/publication.yml`](.github/workflows/publication.yml)), et chaque demande de signature est approuvée à la main. Les bibliothèques tierces livrées dans l'installeur gardent la signature, ou l'absence de signature, que leurs auteurs leur ont donnée.
 
 Rôles :
 

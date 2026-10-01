@@ -1,8 +1,9 @@
 # La construction et la signature d'une version publiée de CStarter. Un tag v<version> poussé par
-# scripts/publication.py la déclenche : l'exécutable figé, que SignPath signe, puis l'installeur,
-# compilé autour de lui et signé à son tour, puis latest.json, déposés dans un brouillon de release.
-# Chaque signature attend l'approbation du mainteneur dans SignPath. scripts/publication.py vérifie
-# ensuite le brouillon, puis le publie.
+# scripts/publication.py la déclenche : l'exécutable figé et le désinstalleur d'Inno Setup, que
+# SignPath signe ensemble, puis l'installeur, compilé autour d'eux et signé à son tour, puis
+# latest.json, déposés dans un brouillon de release. Chacune des deux signatures attend
+# l'approbation du mainteneur dans SignPath. scripts/publication.py vérifie ensuite le brouillon,
+# puis le publie.
 # Lancée à la main, elle construit sans signer, pour essai : l'installeur reste un artefact du run.
 # Les actions sont épinglées par commit.
 
@@ -62,17 +63,22 @@ jobs:
       - name: Exécutable figé
         run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape executable
 
-      - name: Exécutable à signer
+      - name: Désinstalleur à signer
+        run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape desinstalleur
+
+      - name: Exécutable et désinstalleur à signer
         id: executable
         if: github.event_name == 'push'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: executable
-          path: ${{ runner.temp }}\dist\CStarter\
+          path: |
+            ${{ runner.temp }}\dist\CStarter\
+            ${{ runner.temp }}\dist\desinstalleur\
           include-hidden-files: true
           if-no-files-found: error
 
-      - name: Signature de l'exécutable
+      - name: Signature de l'exécutable et du désinstalleur
         if: github.event_name == 'push'
         uses: signpath/github-action-submit-signing-request@f6d04783b4569d051e0c80105fe66e82819d0092 # v3
         with:
@@ -86,11 +92,13 @@ jobs:
           wait-for-completion-timeout-in-seconds: 3600
           output-artifact-directory: ${{ runner.temp }}\signe\executable
 
-      - name: Exécutable signé à la place du figé
+      - name: Exécutable et désinstalleur signés à la place des leurs
         if: github.event_name == 'push'
         run: |
-          Remove-Item "$env:RUNNER_TEMP\dist\CStarter" -Recurse -Force
-          Move-Item "$env:RUNNER_TEMP\signe\executable" "$env:RUNNER_TEMP\dist\CStarter"
+          foreach ($folder in 'CStarter', 'desinstalleur') {
+            Remove-Item "$env:RUNNER_TEMP\dist\$folder" -Recurse -Force
+            Move-Item "$env:RUNNER_TEMP\signe\executable\$folder" "$env:RUNNER_TEMP\dist\$folder"
+          }
 
       - name: Installeur
         run: python scripts/distribution.py "$env:RUNNER_TEMP\dist" --etape installeur ${{ github.event_name == 'push' && '--signe' || '' }}
