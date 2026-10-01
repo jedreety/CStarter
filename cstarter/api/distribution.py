@@ -2,10 +2,11 @@
 
 Installé, CStarter est un dossier que PyInstaller a figé : cstarter.exe, la ligne de commande, et
 cstarterw.exe, l'interface. Chaque version se publie sur GitHub Releases, avec son installeur et
-latest.json. Une version plus récente se télécharge en HTTPS, empreinte vérifiée, puis son
-installeur remplace CStarter sans fenêtre.
+latest.json. Une version plus récente se télécharge en HTTPS, empreinte et signature vérifiées,
+puis son installeur remplace CStarter sans fenêtre.
 """
 
+import contextlib
 import hashlib
 import json
 import os
@@ -23,9 +24,16 @@ from cstarter.packages import archive
 VERSION = cstarter.__version__
 # L'adresse des versions publiées. Vide, elle désactive les mises à jour.
 RELEASES = "https://github.com/jedreety/CStarter/releases"
+# Les signataires admis pour un installeur, par une signature Authenticode valide. Vide, aucune
+# signature n'est exigée. Changer de signataire passe d'abord par une version qui admet les deux.
+PUBLISHERS = ("SignPath Foundation",)
 _NUMBER = re.compile(r"\d+\.\d+\.\d+")
 _INSTALLER = re.compile(r"[\w.-]+\.exe")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
+_SYSTEM32 = Path(os.environ.get("SystemRoot", r"C:\Windows"), "System32")
+# Le sujet du certificat qui signe le fichier de CSTARTER_SIGNED, si sa signature est valide.
+_SUBJECT = "$s = Get-AuthenticodeSignature -LiteralPath $env:CSTARTER_SIGNED; if ($s.Status -eq 'Valid') { $s.SignerCertificate.Subject }"
+_CN = re.compile(r'CN=(?:"([^"]*)"|([^,]*))')
 
 
 def executable() -> Path | None:
@@ -59,12 +67,14 @@ def check_update() -> config.Update | None:
 
 def download_update(update: config.Update) -> Path:
     """L'installeur de update, téléchargé dans %LOCALAPPDATA%\\CStarter\\mises-a-jour\\ s'il n'y est
-    pas encore, et dont l'empreinte est celle de latest.json. Ce dossier ne garde que lui."""
+    pas encore, dont l'empreinte est celle de latest.json et la signature celle d'un des
+    PUBLISHERS. Ce dossier ne garde que lui."""
     folder = Path(os.environ.get("LOCALAPPDATA", Path.home()), "CStarter", "mises-a-jour")
     folder.mkdir(parents=True, exist_ok=True)
     installer = folder / update.installer
     if not installer.is_file() or _digest(installer) != update.sha256:
-        partial = folder / f"{update.installer}.part"
+        # Un fichier partiel par processus : deux fenêtres ouvertes ensemble téléchargent chacune le sien.
+        partial = folder / f"{update.installer}.{os.getpid()}.part"
         if archive.download(f"{RELEASES}/download/v{update.version}/{update.installer}", partial) != update.sha256:
             partial.unlink()
             raise CStarterError(
@@ -74,20 +84,77 @@ def download_update(update: config.Update) -> Path:
                 )
             )
         os.replace(partial, installer)
+    _check_signature(installer)
     for old in folder.iterdir():
         if old.is_file() and old != installer:
-            old.unlink()
+            with contextlib.suppress(OSError):  # le partiel d'une autre fenêtre, encore ouvert
+                old.unlink()
     return installer
 
 
 def install_update(installer: Path, relaunch: bool = False, project: Path | None = None) -> None:
     """Lance installer sans fenêtre, détaché : CStarter doit se fermer aussitôt, et l'installeur
     ferme ce qui en reste avant de remplacer ses fichiers. Avec relaunch, il relance ensuite
-    l'interface, sur project s'il est donné."""
+    l'interface, sur project s'il est donné.
+
+    Refusé quand une autre fenêtre de CStarter est ouverte : l'installeur la fermerait de force, avec
+    ses modifications non enregistrées. relaunch vient de l'interface, qui compte sa propre fenêtre.
+    La signature se vérifie encore : le fichier a pu changer depuis son téléchargement."""
+    if _windows() > (1 if relaunch else 0):
+        raise CStarterError(
+            t("une autre fenêtre de CStarter est ouverte : fermez-la, puis recommencez", "another CStarter window is open: close it, then try again")
+            if relaunch
+            else t(
+                "l'interface de CStarter est ouverte : fermez-la, ou mettez à jour depuis sa barre de titre",
+                "the CStarter interface is open: close it, or update from its title bar",
+            )
+        )
+    _check_signature(installer)
     arguments = [str(installer), "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/FORCECLOSEAPPLICATIONS"]
     if relaunch:
         arguments += ["/RELAUNCH=1", *([f"/PROJECT={project}"] if project is not None else [])]
     subprocess.Popen(arguments, creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
+
+
+def signer(path: Path) -> str | None:
+    """Le nom de qui signe path, si sa signature Authenticode est valide ; None sinon."""
+    result = subprocess.run(
+        [str(_SYSTEM32 / "WindowsPowerShell" / "v1.0" / "powershell.exe"), "-NoProfile", "-NonInteractive", "-Command", _SUBJECT],
+        env={**os.environ, "CSTARTER_SIGNED": str(path)},
+        capture_output=True,
+        encoding="oem",
+        errors="replace",
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        check=False,
+    )
+    match = _CN.search(result.stdout)
+    if match is None:
+        return None
+    return match.group(1) if match.group(1) is not None else match.group(2).strip()
+
+
+def _check_signature(installer: Path) -> None:
+    """Lève CStarterError si PUBLISHERS en nomme et qu'aucun ne signe installer."""
+    if PUBLISHERS and signer(installer) not in PUBLISHERS:
+        raise CStarterError(
+            t(
+                f"{installer.name} : aucune signature valide de {', '.join(PUBLISHERS)}, installeur refusé",
+                f"{installer.name}: no valid signature from {', '.join(PUBLISHERS)}, installer refused",
+            )
+        )
+
+
+def _windows() -> int:
+    """Le nombre d'interfaces de CStarter ouvertes : les processus cstarterw.exe."""
+    result = subprocess.run(
+        [str(_SYSTEM32 / "tasklist.exe"), "/FI", "IMAGENAME eq cstarterw.exe", "/FO", "CSV", "/NH"],
+        capture_output=True,
+        encoding="oem",
+        errors="replace",
+        creationflags=subprocess.CREATE_NO_WINDOW,
+        check=False,
+    )
+    return sum(line.lower().startswith('"cstarterw.exe"') for line in result.stdout.splitlines())
 
 
 def _key(version: str) -> tuple[int, ...]:

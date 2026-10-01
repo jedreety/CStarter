@@ -17,6 +17,8 @@ AppId={{28F715C6-5724-5F79-8EFE-0F6DA841B9FB}
 AppName=CStarter
 AppVersion={#Version}
 AppVerName=CStarter {#Version}
+AppPublisher=jedreety
+AppCopyright=Copyright (c) 2026 jedreety
 DefaultDirName={userpf}\CStarter
 DisableDirPage=yes
 DisableProgramGroupPage=yes
@@ -47,6 +49,11 @@ Type: filesandordirs; Name: "{app}\_internal"
 
 [Files]
 Source: "{#Source}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
+
+[UninstallDelete]
+; L'installeur qu'une mise à jour a téléchargé. Le cache et les réglages restent.
+Type: filesandordirs; Name: "{localappdata}\CStarter\mises-a-jour"
 
 [Icons]
 Name: "{autoprograms}\CStarter"; Filename: "{app}\cstarterw.exe"
