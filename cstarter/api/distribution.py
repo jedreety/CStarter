@@ -25,8 +25,9 @@ VERSION = cstarter.__version__
 # L'adresse des versions publiées. Vide, elle désactive les mises à jour.
 RELEASES = "https://github.com/jedreety/CStarter/releases"
 # Les signataires admis pour un installeur, par une signature Authenticode valide. Vide, aucune
-# signature n'est exigée. Changer de signataire passe d'abord par une version qui admet les deux.
-PUBLISHERS = ("SignPath Foundation",)
+# signature n'est exigée : c'est le cas jusqu'à la première version que SignPath signe, qui y met
+# "SignPath Foundation". Changer de signataire passe d'abord par une version qui admet les deux.
+PUBLISHERS = ()
 _NUMBER = re.compile(r"\d+\.\d+\.\d+")
 _INSTALLER = re.compile(r"[\w.-]+\.exe")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
