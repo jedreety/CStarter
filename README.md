@@ -1,196 +1,431 @@
+<div align="center">
+
+<img src=".github/images/logo.svg" width="88" alt="">
+
 # CStarter
 
-**English** · [Français](README.fr.md)
+### The C and C++ project manager for Windows
 
-CStarter is a C and C++ project manager for Windows. You describe a project once, in a `.cstarter/` folder of small JSON files, and CStarter generates its Visual Studio solution, builds it with MSBuild and runs it. It installs libraries into a shared cache and links them to your targets, converts CMake, Premake and Visual Studio projects, and works with git. It comes as a desktop app and as a command line, in English and French.
+Describe your project once, in a few small JSON files.<br>
+CStarter writes the Visual Studio solution, builds it and runs it.<br>
+Your libraries come along.
+
+<br>
+
+<a href="https://github.com/jedreety/CStarter/releases/latest"><img src=".github/images/telecharger-en.png" width="312" alt="Download for Windows"></a>
+
+<br>
+
+[![Latest version](https://img.shields.io/github/v/release/jedreety/CStarter?style=flat-square&label=version&color=8e8cff)](https://github.com/jedreety/CStarter/releases/latest)
+[![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%C2%B7%2011-2c9be6?style=flat-square)](#install)
+[![MIT license](https://img.shields.io/badge/license-MIT-3ddc97?style=flat-square)](LICENSE)
+
+[Features](#features) · [Install](#install) · [Quick start](#quick-start) · [Documentation](#documentation) · [Français](README.fr.md)
+
+</div>
+
+<br>
+
+<p align="center">
+  <img src=".github/images/accueil-en.webp" width="100%" alt="The CStarter home screen, with the graph of the last project">
+</p>
+
+## Features
+
+### One folder, a real Visual Studio solution
+
+No CMake, no Premake, no Lua to write.<br>
+Your project lives in `.cstarter/`, a few JSON files versioned with your code.<br>
+CStarter turns them into clean `.sln` and `.vcxproj` files, identical on every machine.
+
+```text
+Orbit/
+├── .cstarter/                  the whole project
+│   ├── project.json
+│   ├── solution.json           platforms, startup target, links between targets
+│   ├── targets/
+│   │   ├── Engine.json         type, sources, configurations, libraries
+│   │   └── Orbit.json
+│   └── dependencies.lock.json  the exact version of every library
+├── Engine/
+└── Orbit/
+```
+
+### See it, build it, run it
+
+Your targets and the libraries they link, in one graph.<br>
+**Ctrl+Shift+B** builds every configuration for every platform.<br>
+**Ctrl+F5** runs your program right inside the app.
+
+<p align="center">
+  <img src=".github/images/compiler-en.webp" width="100%" alt="The project graph, the six builds of the matrix, and the program output">
+</p>
+
+### Every setting, side by side
+
+Debug, Release, Dist, or any name you like.<br>
+Compare your configurations in one view, and change them in place.
+
+<p align="center">
+  <img src=".github/images/configurations-en.webp" width="100%" alt="The Debug, Release and Dist configurations of a library, side by side">
+</p>
+
+### Libraries in two clicks
+
+Paste a link, pick a version.<br>
+CStarter shows the CMake options, then builds the library for your project.<br>
+Once, in a cache that all your projects share.
+
+**GitHub · GitLab · vcpkg · conan · archives · local folders**
+
+<p align="center">
+  <img src=".github/images/installer-en.webp" width="100%" alt="Installing glfw: its CMake options, each with its help">
+</p>
+
+### Git, built in
+
+Commit, push, pull and switch branches without leaving the app.<br>
+`.cstarter/` merges by its structure: two targets added on two branches simply add up.<br>
+A cloned project restores its libraries and generates its solution.
+
+<p align="center">
+  <img src=".github/images/git-en.webp" width="100%" alt="The git page: two changed files, a commit message and the history">
+</p>
+
+### And also
+
+- **Convert** a CMake, Premake or Visual Studio project, or a plain folder of sources.
+- **Lock** every library to its exact source, and restore it on any machine.
+- **Vendor** a library into the project, binaries included.
+- **Export** one of your libraries to the cache, for your other projects.
+- **Visual Studio 2022 and 2026**, for x64, x86 and ARM64.
+- **A built-in terminal**, and one click to open the project in Visual Studio or VS Code.
+- **English and French**, in the app and on the command line.
 
 ## Install
 
-Download `CStarter-<version>-setup.exe` from the [latest release](https://github.com/jedreety/CStarter/releases/latest) and run it. CStarter installs for the current user only, in `%LOCALAPPDATA%\Programs\CStarter`, without administrator rights. The installer can add `cstarter` to the PATH, add CStarter to the Start menu and Windows search, and create a desktop shortcut. CStarter runs on 64-bit Windows 10 and 11.
+1. Download `CStarter-<version>-setup.exe` from the [latest release](https://github.com/jedreety/CStarter/releases/latest).
+2. Run it. It installs for you alone, without administrator rights.
+3. Open CStarter. It lists the tools you lack and installs the ones you pick.
 
-The app looks for a newer release when it starts. It downloads it in the background and checks its SHA-256 hash. Once Windows accepts the new installer, **Update** appears in the title bar: the installer replaces CStarter without a window and reopens your project. `cstarter update` does the same from a terminal.
+CStarter runs on 64-bit Windows 10 and 11.<br>
+Building needs Visual Studio 2022, or its Build Tools, with C++.
 
-To uninstall, use *Installed apps* in Windows Settings. A checkbox also removes the installed libraries and the settings (`%USERPROFILE%\.cstarter` and `%LOCALAPPDATA%\CStarter`). Projects are never touched.
+> [!NOTE]
+> Releases are not code-signed yet.<br>
+> SmartScreen warns the first time you run the installer.<br>
+> With Smart App Control on, Windows may refuse a new release for a while.
 
-Releases are not code-signed yet (see [Code signing](#code-signing)). Until they are, SmartScreen warns the first time you run the installer, and on a PC where Smart App Control is on, Windows may refuse a new release for a while.
+## Quick start
 
-## Tools
+**In the app**, choose **Create a project**, then **Build** (Ctrl+B) and **Run** (Ctrl+F5).<br>
+Already have a project? **Convert an existing project** reads it.
 
-CStarter drives the tools you already use. Building needs Visual Studio 2022, or its Build Tools, with the *Desktop development with C++* workload. CMake, Premake 5, vcpkg and conan 2 are needed only by the libraries and projects that use them. CStarter finds the CMake and vcpkg components of Visual Studio when they are not in the PATH.
+**In a terminal**, in a folder that holds the sources of a program:
 
-When tools are missing, the app lists them at first launch, and later under **Tools** in its logo menu, then installs the ones you pick through winget. From a terminal, accepting the UAC prompts, Visual Studio 2022 with the C++ workload, the ARM64 tools, CMake and vcpkg:
+```powershell
+cstarter create   # proposes targets from your sources, then writes .cstarter/
+cstarter build    # generates the solution, then builds it with MSBuild
+cstarter run      # builds, then runs the startup target
+```
 
-    winget install --id Microsoft.VisualStudio.2022.Community --exact --source winget --accept-package-agreements --accept-source-agreements --override "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.Tools.ARM64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.Vcpkg"
+## Documentation
+
+<details>
+<summary><b>Updates and uninstall</b></summary>
+<br>
+
+- CStarter installs in `%LOCALAPPDATA%\Programs\CStarter`.
+- The installer can add `cstarter` to the PATH, CStarter to the Start menu and Windows search, and a desktop shortcut.
+- The app looks for a new release when it starts. It downloads it in the background and checks its SHA-256 hash.
+- Once Windows accepts the new installer, **Update** appears in the title bar. The installer replaces CStarter without a window and reopens your project.
+- `cstarter update` does the same from a terminal.
+- To uninstall, use *Installed apps* in Windows Settings. A checkbox also removes the libraries and the settings (`%USERPROFILE%\.cstarter` and `%LOCALAPPDATA%\CStarter`). Projects are never touched.
+
+</details>
+
+<details>
+<summary><b>The tools CStarter drives</b></summary>
+<br>
+
+| Tool | Needed for |
+|---|---|
+| Visual Studio 2022 or its Build Tools, with *Desktop development with C++* | building, always |
+| CMake | the libraries and projects that use it |
+| Premake 5 | Premake projects and libraries |
+| vcpkg, conan 2 | vcpkg ports, conan packages |
+| git | git |
+
+CStarter finds the CMake and vcpkg of Visual Studio when they are not in the PATH.<br>
+Missing tools are listed at first launch, then under **Tools** in the logo menu. They install through winget.
+
+From a terminal, accepting the UAC prompts, Visual Studio 2022 with the C++ workload, the ARM64 tools, CMake and vcpkg:
+
+```powershell
+winget install --id Microsoft.VisualStudio.2022.Community --exact --source winget --accept-package-agreements --accept-source-agreements --override "--passive --wait --norestart --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.Tools.ARM64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.Vcpkg"
+```
 
 Then, as needed, CMake, Premake 5 and conan 2:
 
-    winget install --id Kitware.CMake --exact --source winget
-    winget install --id Premake.Premake.5.Beta --exact --source winget
-    winget install --id JFrog.Conan --exact --source winget
+```powershell
+winget install --id Kitware.CMake --exact --source winget
+winget install --id Premake.Premake.5.Beta --exact --source winget
+winget install --id JFrog.Conan --exact --source winget
+```
 
-## Getting started
+</details>
 
-In the app, **Create a project** starts a new project with a first target that builds, or copies a template. **Convert an existing project** turns a CMake or Premake project, a Visual Studio solution or a folder of plain sources into a CStarter project. Then **Build** (Ctrl+B) and **Run** (Ctrl+F5).
+<details>
+<summary><b>The app</b></summary>
+<br>
 
-From a terminal, in a folder that holds the sources of a program:
+- The home screen resumes the last project, creates, opens or converts one, clones a repository, and manages the **Libraries** of the cache.
+- Inside a project, the sidebar holds the overview, the dependencies of each target, git, the settings, then each target.
+- Paths come from the folder icon of each field. The **+** of a list opens what can be added to it.
+- Linking a library to a target links it to all of its configurations.
+- **All**, among the configurations of a target, compares them side by side.
+- Changes stay in memory until you save.
+- **Open in**, in the title bar, opens the project in Visual Studio or VS Code.
+- The logo menu holds the language, the tools and **Check for updates**.
+- `cstarterw.exe FOLDER` opens the project of FOLDER directly.
 
-    cstarter create
-    cstarter build
-    cstarter run
+| Shortcut | Action |
+|---|---|
+| Ctrl+S | save |
+| Ctrl+B | build the configuration and platform chosen at the top |
+| Ctrl+Shift+B | build every configuration for every platform |
+| Ctrl+F5 | build, then run the startup target in the **Program** tab |
+| Ctrl+`` ` `` (Ctrl+² on AZERTY) | the built-in terminal: PowerShell in the project folder, where `cstarter` runs this CStarter |
 
-`create` makes the folder the root of the project. It proposes targets from the sources and asks for the type of each one (Enter keeps the proposal), then writes `.cstarter/` and generates the solution. `build` and `run` use the first configuration and platform of the solution, unless `--config` and `--platform` say otherwise.
+</details>
 
-## The app
+<details>
+<summary><b>Command line</b></summary>
+<br>
 
-The home screen offers to resume the last project, create one, open one, convert an existing project, clone a repository, or manage the **Libraries** of the cache, where you install and remove them. On the right, it shows the graph of the project to resume, or of the recent one under the pointer. At the top right, it shows the GitHub account that Git Credential Manager knows, or a way to sign in.
-
-Inside a project, the sidebar holds the overview (the project graph, which you can drag around), the dependencies of each target, git, the settings, then each target. Paths come from the folder icon of each field, and the **+** of a list opens what can be added to it: linking a library to a target links it to all of its configurations. Choosing **All** among the configurations of a target compares them side by side.
-
-Changes stay in memory until you save (Ctrl+S). Ctrl+B builds the configuration and platform chosen at the top, Ctrl+Shift+B every configuration for every platform, and Ctrl+F5 builds then runs the startup target, in the **Program** tab of the bottom panel. Ctrl+`` ` `` (Ctrl+² on an AZERTY keyboard) opens the built-in terminal: PowerShell in the project folder, where `cstarter` runs this same CStarter. **Open in**, in the title bar, opens the project in Visual Studio or in VS Code. The logo menu holds the language, the tools and **Check for updates**.
-
-`cstarterw.exe FOLDER` opens the project of FOLDER directly.
-
-## Command line
-
-Commands that work on a project load the one given by `-p FOLDER`, placed before the command. Without `-p`, CStarter looks for `.cstarter/` from the current folder upward. `create` and `detect` refuse `-p`: their folder is given by `--location`, the current folder by default. `cstarter COMMAND --help` describes each command.
+- A command works on the project given by `-p FOLDER`, placed before the command.
+- Without `-p`, CStarter looks for `.cstarter/` from the current folder upward.
+- `create` and `detect` take `--location` instead, the current folder by default.
+- `cstarter COMMAND --help` describes each command.
+- `build` and `run` use the first configuration and platform, unless `--config` and `--platform` say otherwise.
 
 | Commands | Purpose |
 |---|---|
-| `create`, `detect` | create a project, from the sources of the folder if any; import a folder that already has a build setup (see [Import](#import)) |
-| `generate`, `build`, `clean` | generate the solution; generate then build, `--all` for every configuration and platform; remove generated files and build outputs |
+| `create`, `detect` | create a project, from the sources of the folder if any; import a folder that already has a build setup |
+| `generate`, `build`, `clean` | generate the solution; generate then build, `--all` for every configuration and platform; remove generated files and outputs |
 | `run`, `get-program` | build, then run the startup target with its debugging settings; show what `run` launches |
 | `get-project`, `get-vcxprojs`, `get-vcxproj` | show the project, the list of targets, a target |
 | `add-platform`, `remove-platform`, `set-startup`, `set-sln-output` | the solution: its platforms (x64, x86, ARM64), its startup target, the folder of the `.sln` |
 | `add-define`, `remove-define` | global defines; `--string` for a C string |
 | `add-target`, `remove-target`, `rename-target` | targets; renaming follows links, the startup target and default outputs |
-| `add-config`, `remove-config`, `rename-config`, `add-config-define`, `remove-config-define` | the configurations of a target; renaming keeps what each link builds |
-| `add-project-ref`, `remove-project-ref`, `set-project-ref` | links between targets; `--map Dist=Release`, which `set-project-ref` replaces |
+| `add-config`, `remove-config`, `rename-config`, `add-config-define`, `remove-config-define` | the configurations of a target; `add-config --copy-of` also copies the linked libraries |
+| `add-project-ref`, `remove-project-ref`, `set-project-ref` | links between targets; `--map Dist=Release` |
 | `set-source-dirs`, `add-include-dir`, `set-public-headers`, `set-vcxproj-dir`, `set-pch` | the sources and outputs of a target, its precompiled header |
-| `analyze-dep`, `install-dep` | examine a source without building anything; install it in the cache, or add platforms to an entry |
+| `analyze-dep`, `install-dep` | examine a source without building it; install it in the cache, or add platforms to an entry |
 | `link-dep`, `unlink-dep` | link a cache entry to a configuration of a target; unlink it |
 | `list-deps`, `get-dependency`, `get-dependencies`, `remove-dep` | list the cache, show an entry, list the entries of the project; remove an entry |
 | `restore`, `vendor-dep`, `unvendor-dep`, `export-dep` | rebuild what the cache lacks; copy an entry into the project, or take it out; make a target an entry |
-| `init`, `clone`, `status`, `add`, `commit`, `push`, `pull`, `branch`, `switch`, `merge`, `remote`, `log`, `diff`, `discard` | git (see [git](#git)) |
-| `language` | show the language of the messages, or choose it: `fr` or `en` (see [Language](#language)) |
+| `init`, `clone`, `status`, `add`, `commit`, `push`, `pull`, `branch`, `switch`, `merge`, `remote`, `log`, `diff`, `discard` | git |
+| `language` | show or choose the language: `en` or `fr` |
 | `update` | install the latest release of CStarter |
 
-`build --all` builds every configuration of the solution for every platform, one pair after the other, then reports on each.
+Other settings (runtime, optimization, free compiler options) live in the JSON files of `.cstarter/`, or in the app.<br>
+Generated files are not meant to be edited: the next generation overwrites them, and deletes those nothing produces any more.
 
-Other settings (runtime library, optimization, free compiler options) are edited in the JSON files of `.cstarter/`, or in the app. Generated files are not meant to be edited: the next generation overwrites them, and deletes those that nothing produces any more (after `remove-target`, for instance). `add-config --copy-of` also copies the linked entries. When a target dependency lacks the new configuration, the link builds there the same configuration as the copied one does.
+</details>
 
-## Dependencies
+<details>
+<summary><b>Libraries</b></summary>
+<br>
 
-The cache lives in `%USERPROFILE%\.cstarter\` and is shared by all projects. An entry is a single build configuration, for one or more platforms: `fmt` header-only, `spdlog_debug` built with `MDd`, `spdlog_release` with `MD`.
+- The cache lives in `%USERPROFILE%\.cstarter\`, shared by all projects.
+- An entry is one build configuration, for one or more platforms: `fmt` header-only, `spdlog_mdd` built with `MDd`, `spdlog_md` with `MD`.
+- In the app, **Install** asks only for a link. A GitHub or GitLab repository then offers its versions, the latest first, and its branches.
+- CMake configures the source and shows its options, with their help. Only the ones you change become build options.
+- The app builds one entry per runtime of your project's configurations, for the platforms of its solution. A header-only library makes only one.
 
-The source is a `https://github.com/…` or `https://gitlab.com/…` repository at a tag (`--tag`, resolved to a commit), an `https://` archive, a local folder, a vcpkg port (`vcpkg:PORT`, with `--tag` giving its exact version) or a conan package (`conan:NAME/VERSION`). The builder is `none` (header-only), `cmake`, `premake`, `msbuild` or `manual`; vcpkg and conan sources have their own builder, of the same name. The options of each builder:
+| Source | Form |
+|---|---|
+| GitHub, GitLab | `https://github.com/…` or `https://gitlab.com/…`, with `--tag` resolved to a commit |
+| Archive | `https://…` |
+| Local folder | a path |
+| vcpkg | `vcpkg:PORT`, with `--tag` for its exact version |
+| conan | `conan:NAME/VERSION` |
 
 | Builder | Options |
 |---|---|
+| `none` (header-only) | `--flag include=FOLDER` |
 | `cmake` | `--flag=-DOPTION=VALUE` |
-| `none` | `--flag include=FOLDER` |
 | `manual` | `--flag include=FOLDER`, `--flag lib/x64=FOLDER`, `--flag bin/x64=FOLDER` |
 | `msbuild`, `premake` | `--flag sln=FILE`, `--flag target=PROJECT`, `--flag configuration=NAME`, `--flag include=FOLDER` |
 | `vcpkg` | `--flag linkage=static` or `--flag linkage=dynamic` (the default with `MD`) |
 | `conan` | `--flag=-o=fmt/*:shared=True` |
 
-`msbuild` and `premake` impose the runtime of the entry and the v143 toolset on every project of the solution. conan is installed separately (see [Tools](#tools)). A conan package without binaries for the requested settings is built from its sources, with the CMake of Visual Studio if there is no other.
+```powershell
+cstarter install-dep fmt 12.2.0 https://github.com/fmtlib/fmt --tag 12.2.0 --build none
+cstarter install-dep lz4_md 1.10.0 vcpkg:lz4 --tag 1.10.0 --runtime MD
+cstarter install-dep zlib_md 1.3.1 conan:zlib/1.3.1 --runtime MD
+cstarter link-dep App Debug fmt 12.2.0
+```
 
-`install-dep` shows the analysis first, then asks for the build system, unless `--build` gives it; the source is downloaded only once. Without a source, it adds the `--platform` values to an existing entry, with its recipe. `--require NAME`, repeatable, names an entry that this one expects: `link-dep` and `generate` warn when the configuration does not link it. `GITHUB_TOKEN` and `GITLAB_TOKEN`, when they are set, are used for private repositories and to raise API rate limits.
+- `install-dep` shows the analysis first, then asks for the build system, unless `--build` gives it.
+- `--require NAME` names an entry this one expects: `link-dep` and `generate` warn when the configuration does not link it.
+- Linking refuses an entry whose runtime differs from the configuration's, an entry that lacks a platform of the solution, and two entries from the same source.
+- `msbuild` and `premake` impose the runtime of the entry and the v143 toolset on every project of their solution.
+- A conan package without binaries for your settings is built from its sources.
+- An entry does not declare the defines and options it expects: the project writes them itself (fmt 11, for instance, needs `/utf-8`).
+- `GITHUB_TOKEN` and `GITLAB_TOKEN`, when set, are used for private repositories and API rate limits.
 
-In the app, **Install a library**, on the **Libraries** page, asks only for a link. A GitHub or GitLab repository then offers its versions, the latest first, and its branches; a branch is installed at the commit it points to. After the download, CMake configures the source and shows all its parameters, with their help: only the ones you change become options. The installation builds one entry NAME_runtime per runtime of the configurations of the open project (`fmt_mdd` for Debug, `fmt_md` for Release), for the platforms of its solution; a header-only library makes only one.
+</details>
 
-    cstarter install-dep lz4_md 1.10.0 vcpkg:lz4 --tag 1.10.0 --runtime MD
-    cstarter install-dep zlib_md 1.3.1 conan:zlib/1.3.1 --runtime MD
+<details>
+<summary><b>Portability</b></summary>
+<br>
 
-The entries of `exemples/dependances/` are installed this way:
+- `dependencies.lock.json`, committed with the project, describes each linked entry: its exact source (commit, hashes, vcpkg baseline, conan revision) and its recipe.
+- On another machine, `restore` rebuilds what the cache lacks, hashes checked. Then `generate` and `build` are enough.
+- A local entry (a folder, an exported target) cannot be rebuilt elsewhere: `restore` reports it.
+- `vendor-dep NAME VERSION` copies an entry into `.cstarter/vendor/`, binaries included. The project then works without the cache, on every machine.
+- `export-dep TARGET CONFIG NAME VERSION` builds a library target and makes it a cache entry: its public headers, `.lib`, `.dll` and `.pdb` files.
 
-    cstarter install-dep fmt 12.2.0 https://github.com/fmtlib/fmt --tag 12.2.0 --build none
-    cstarter install-dep spdlog_debug 1.17.0 https://github.com/gabime/spdlog --tag v1.17.0 --build cmake --runtime MDd --platform x64 --platform ARM64 --flag=-DSPDLOG_BUILD_SHARED=ON --flag=-DSPDLOG_USE_STD_FORMAT=ON --flag=-DSPDLOG_BUILD_EXAMPLE=OFF
-    cstarter install-dep spdlog_release 1.17.0 https://github.com/gabime/spdlog --tag v1.17.0 --build cmake --runtime MD --platform x64 --platform ARM64 --flag=-DSPDLOG_BUILD_SHARED=ON --flag=-DSPDLOG_USE_STD_FORMAT=ON --flag=-DSPDLOG_BUILD_EXAMPLE=OFF
+</details>
 
-Then, in a project: `cstarter link-dep App Debug fmt 12.2.0`. Linking refuses an entry whose runtime differs from the configuration's, an entry that lacks a platform of the solution, and two entries from the same source. Generation checks all of this again.
+<details>
+<summary><b>Converting a project</b></summary>
+<br>
 
-An entry does not declare the defines and options it expects from the projects that use it: the project writes them itself. `exemples/dependances/` thus declares `FMT_HEADER_ONLY`, `SPDLOG_COMPILED_LIB`, `SPDLOG_SHARED_LIB`, `SPDLOG_USE_STD_FORMAT`, and `/utf-8 /wd4251 /wd4275`. spdlog uses `std::format` there: its own copy of fmt, linked next to another fmt, would put two fmt in the same binary.
+- `cstarter detect [NAME] [--location FOLDER]`, or **Convert an existing project** in the app.
+- It reads Visual Studio solutions, CMake, Premake, `vcpkg.json`, `conanfile.txt`, git and, failing those, plain sources.
+- It shows what it recognized and what it could not translate, then writes `.cstarter/` after confirmation.
+- Reading a `CMakeLists.txt` or a `premake5.lua` runs the project's code: CStarter asks first.
+- The libraries of `vcpkg.json` and `conanfile.txt` are installed in the cache, one entry per runtime, and linked to each target.
+- With only sources, it asks for the type of each target, as `create` does.
+- It then offers to delete the old configuration files it translated. It never does so on its own.
 
-## Portability
+</details>
 
-`dependencies.lock.json`, committed with the project, describes each linked entry: its exact source (commit, hashes of the archive and of its contents, vcpkg baseline, conan revision) and its recipe. On another machine, `restore` rebuilds in the cache what is missing there, hashes checked (a recompressed archive with identical contents passes), then `generate` and `build` are enough. A local entry (a folder, an exported target) cannot be rebuilt elsewhere: `restore` reports it.
+<details>
+<summary><b>git</b></summary>
+<br>
 
-`vendor-dep NAME VERSION` copies an entry into `.cstarter/vendor/`, binaries included. The project then uses it without the cache, on every machine. This is the way out for local entries.
+```powershell
+cstarter -p FOLDER init
+cstarter -p FOLDER add FOLDER
+cstarter -p FOLDER commit -m "Initial project"
+cstarter clone URL FOLDER
+```
 
-`export-dep TARGET CONFIG NAME VERSION` builds a library target in the chosen configuration, for the platforms of the solution (or `--platform`), and makes it a cache entry: its public headers, its `.lib` and `.dll` files and their `.pdb`. The entries that this configuration links become its `requires`.
+- `init` creates the repository, writes `.gitignore` and `.gitattributes`, and declares the merge driver. It offers Git LFS for vendored binaries.
+- An existing `.gitignore` is completed only after confirmation. In a repository cloned without CStarter, `init` declares the driver.
+- `clone` restores the libraries, then generates the solution.
+- `pull`, `merge` and `switch` regenerate the solution when `.cstarter/` changed.
+- The driver merges `.cstarter/` by its structure: targets, defines or platforms added on each side add up.
+- A real disagreement stays between git's markers, around the one setting at stake. In the app, **Mark resolved** stages the repaired file.
+- `remote`, `log`, `diff` and `discard` cover the rest. `discard` asks first.
 
-## Import
+</details>
 
-`cstarter detect [NAME] [--location FOLDER]` runs every detector: Visual Studio solution, CMake, Premake, `vcpkg.json`, `conanfile.txt`, git and, failing those, plain sources. It shows what it recognized and what it could not translate, then writes `.cstarter/` after confirmation. Reading a `CMakeLists.txt` (through the CMake File API) or a `premake5.lua` (through `premake5 vs2022`, in a copy) runs the code of the project: CStarter asks for consent first. The dependencies of `vcpkg.json` and `conanfile.txt` are installed in the cache, one entry per runtime (`lz4_mdd`, `lz4_md`, `lz4_mt`), linked to each target. When it finds only sources, it has you confirm the type of each target, as `create` does. It then offers to delete the old configuration files it translated, and never does so on its own. `cstarter generate` then produces the solution.
+<details>
+<summary><b>Visual Studio 2026</b></summary>
+<br>
 
-An entry does not declare the options it expects from the projects that use it: fmt 11, for instance, requires `/utf-8`. The imported project adds them itself, in its JSON files.
+- `"generator": "vs2026"` in `.cstarter/project.json`, or the generator in the app's settings, targets Visual Studio 2026 (toolset `v145`).
+- `generate` warns when no Visual Studio installation has the toolset of the generator.
+- `build` uses the MSBuild of the most recent installation that has it.
 
-## Visual Studio 2026
+</details>
 
-`"generator": "vs2026"` in `.cstarter/project.json` (or the generator, in the app) produces a solution for Visual Studio 2026: toolset `v145`, Visual Studio 18 header. `generate` warns when no installation of Visual Studio has the toolset of the generator for a platform of the solution; `build` uses the MSBuild of the most recent installation that has it.
+<details>
+<summary><b>Language</b></summary>
+<br>
 
-## git
+- CStarter speaks English or French: the app, its messages and the command line.
+- Choose it from the logo menu, or with `cstarter language en`. The choice holds for both.
+- Without a choice, CStarter follows Windows. MSBuild follows it through `VSLANG`.
+- What CStarter writes into a project never depends on the language.
 
-`init` creates the repository if there is none, then writes `.gitignore` (the generated files, `build/`, `.vs/`: they are regenerated) and `.gitattributes` (the JSON files of `.cstarter/`, merged by CStarter), and declares the merge driver in `.git/config`. It offers Git LFS for vendored binaries. An existing `.gitignore` is completed only after confirmation. In a repository cloned without CStarter, `init` declares the driver.
+</details>
 
-    cstarter -p FOLDER init
-    cstarter -p FOLDER add FOLDER
-    cstarter -p FOLDER commit -m "Initial project"
-    cstarter clone URL FOLDER
+<details>
+<summary><b>Building from source</b></summary>
+<br>
 
-`remote origin URL` adds the remote, or changes its address. `log` shows the last commits, `diff PATH` the changes of a file, and `discard PATH` undoes them after confirmation, except for a file that the last commit does not have.
+CStarter needs Python 3.13 and its standard library only.<br>
+The app also needs pywebview, and Node.js to build its page once.
 
-`clone` restores the dependencies, then generates the solution. `pull`, `merge` and `switch` regenerate the solution when `.cstarter/` changed. The driver merges the JSON files of `.cstarter/` according to their structure: two targets, two defines or two platforms added on each side add up. A real disagreement stays between the markers of git, around the one setting at stake; `status` shows it, then `add` and `commit` finish the merge. In the app, **Mark resolved** stages the repaired file.
+```powershell
+py -3.13 -m venv .venv
+.venv\Scripts\activate
+python -m pip install pywebview==6.2.1
+cd cstarter\gui\web
+npm ci
+npm run build
+```
 
-## Language
+Then, from the root of the repository, `python -m cstarter` is the command line, and `python -m cstarter.gui [FOLDER]` the app.
 
-CStarter speaks English or French: the app, its messages and the command line. Choose it from the logo menu of the app, or with `cstarter language en`; the choice holds for both. Without a choice, CStarter follows the language of Windows. MSBuild follows it through `VSLANG`. What CStarter writes into a project does not change with the language.
+**The installer.** PyInstaller goes in the venv, pinned with hashes. Inno Setup comes from winget:
 
-## Building from source
+```powershell
+python -m pip install -r scripts/distribution/requirements.txt
+winget install --id JRSoftware.InnoSetup --exact --source winget --scope user
+python scripts/distribution.py C:\cstarter-dist
+```
 
-CStarter needs Python 3.13 and its standard library only. The app also needs pywebview, and Node.js to build its page once. From the root of the repository:
+The last command builds the page, the app with `THIRD-PARTY-NOTICES.txt`, `CStarter-<version>-setup.exe` and `latest.json`, into a folder outside the repository.<br>
+Such an installer is only for testing. Releases are built by GitHub Actions from a `v<version>` tag ([`publication.yml`](.github/workflows/publication.yml)), then checked and published by `scripts/publication.py`.
 
-    py -3.13 -m venv .venv
-    .venv\Scripts\activate
-    python -m pip install pywebview==6.2.1
-    cd cstarter\gui\web
-    npm ci
-    npm run build
+**Checking a change.** There is no test suite: a change is checked by comparing generations, each time into a new folder outside the repository.
 
-Then, from the root of the repository, `python -m cstarter` is the command line and `python -m cstarter.gui [FOLDER]` the app.
+```powershell
+python scripts/generations.py C:\cstarter-gen\before
+python scripts/generations.py C:\cstarter-gen\after
+git -c core.autocrlf=false diff --no-index C:\cstarter-gen\before C:\cstarter-gen\after
+```
 
-### Building the installer
+A refactoring leaves the generated files identical to the byte.<br>
+A change of behaviour changes only the lines it announces.
 
-PyInstaller goes in the venv, pinned with hashes, and Inno Setup comes from winget:
+The `import-*` examples go through `detect`, answering yes to everything, on their copy: they need CMake, premake5, vcpkg or conan, and the network for vcpkg and conan.<br>
+`exemples/dependances/` is generated only if its entries are in the cache:
 
-    python -m pip install -r scripts/distribution/requirements.txt
-    winget install --id JRSoftware.InnoSetup --exact --source winget --scope user
+```powershell
+cstarter install-dep fmt 12.2.0 https://github.com/fmtlib/fmt --tag 12.2.0 --build none
+cstarter install-dep spdlog_debug 1.17.0 https://github.com/gabime/spdlog --tag v1.17.0 --build cmake --runtime MDd --platform x64 --platform ARM64 --flag=-DSPDLOG_BUILD_SHARED=ON --flag=-DSPDLOG_USE_STD_FORMAT=ON --flag=-DSPDLOG_BUILD_EXAMPLE=OFF
+cstarter install-dep spdlog_release 1.17.0 https://github.com/gabime/spdlog --tag v1.17.0 --build cmake --runtime MD --platform x64 --platform ARM64 --flag=-DSPDLOG_BUILD_SHARED=ON --flag=-DSPDLOG_USE_STD_FORMAT=ON --flag=-DSPDLOG_BUILD_EXAMPLE=OFF
+```
 
-Then, into a folder outside the repository:
-
-    python scripts/distribution.py C:\cstarter-dist
-
-It builds the page, the app with `THIRD-PARTY-NOTICES.txt`, `CStarter-<version>-setup.exe` and `latest.json`. The version comes from `cstarter/__init__.py`. An installer built this way is only for testing: releases are built by GitHub Actions from a `v<version>` tag ([`.github/workflows/publication.yml`](.github/workflows/publication.yml)), then checked and published by `scripts/publication.py`.
-
-### Checking a change
-
-There is no test suite: a change is checked by comparing generations. Before the change and after it, each time into a new folder outside the repository:
-
-    python scripts/generations.py C:\cstarter-gen\before
-    python scripts/generations.py C:\cstarter-gen\after
-    git -c core.autocrlf=false diff --no-index C:\cstarter-gen\before C:\cstarter-gen\after
-
-A refactoring leaves the generated files identical to the byte, and a change of behaviour changes only the lines it announces. `exemples/dependances/` is generated only if its entries are in the cache. The `import-*` examples go through `detect`, answering yes to everything, on their copy: they need CMake, premake5, vcpkg or conan, and the network for vcpkg and conan. An example that fails is reported, and the script generates the others.
+</details>
 
 ## Code signing
 
-Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/). The [code signing policy](CODE_SIGNING.md) describes what gets signed, how releases are built and who approves them. Signing starts once SignPath Foundation accepts the project: releases up to 0.1.4 are not signed.
+Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+
+The [code signing policy](CODE_SIGNING.md) says what gets signed, how releases are built and who approves them.<br>
+Signing starts once SignPath Foundation accepts the project. Releases up to 0.1.4 are not signed.
 
 ## Privacy
 
-CStarter collects no data and sends no telemetry. When the app starts, it asks github.com whether a newer release exists, and if one does, downloads its installer from GitHub. Everything else happens only when you ask for it: downloading the libraries you install (from GitHub, GitLab, vcpkg, conan or an address you give), git operations on the repositories you choose, and installing the tools you pick through winget.
+CStarter collects no data and sends no telemetry.
+
+When the app starts, it asks github.com whether a newer release exists.<br>
+If one does, it downloads its installer from GitHub.
+
+Everything else happens only when you ask for it:
+
+- the libraries you install, from GitHub, GitLab, vcpkg, conan or an address you give
+- the git operations on the repositories you choose
+- the tools you pick, through winget
 
 ## License
 
-CStarter is released under the [MIT license](LICENSE). The installer also ships third-party components under their own licenses, listed in `THIRD-PARTY-NOTICES.txt` in the installation folder.
+CStarter is released under the [MIT license](LICENSE).<br>
+The installer also ships third-party components, under their own licenses.<br>
+`THIRD-PARTY-NOTICES.txt`, in the installation folder, lists them.
+
+<br>
+
+<p align="center">
+  <img src=".github/images/logo.svg" width="28" alt=""><br>
+  <sub>Made for C and C++ on Windows</sub>
+</p>
