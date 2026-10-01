@@ -398,6 +398,16 @@ export async function openInVisualStudio(): Promise<void> {
   }
 }
 
+// VS Code ouvre le dossier du projet tel qu'il est sur le disque : les modifications s'enregistrent d'abord.
+export async function openInVSCode(): Promise<void> {
+  if (!(await ensureSaved())) return;
+  try {
+    await call('open_vscode');
+  } catch (error) {
+    fail(error, t('VS Code ne s’ouvre pas', 'VS Code does not open'));
+  }
+}
+
 export function selectPair(configuration: string, platform: string): void {
   setState({ pair: { configuration, platform } });
 }

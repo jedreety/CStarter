@@ -20,7 +20,7 @@ from cstarter.errors import CStarterError, ConfigError, PackageError, ProjectNot
 from cstarter.generate import GENERATORS, MARK, SUFFIXES, TOOLSETS
 from cstarter.language import t
 from cstarter.packages import cache
-from cstarter.toolchain import msbuild
+from cstarter.toolchain import msbuild, vscode
 
 _MARK = MARK.encode("utf-8")
 _LOCK = ".cstarter/dependencies.lock.json"
@@ -430,6 +430,11 @@ def clean(project: config.Project) -> list[str]:
     compris, et les dossiers de sorties par plateforme et configuration. Rien d'autre. Ni les
     sources ni le cache ne sont lus : clean marche aussi quand l'un d'eux manque."""
     return write.remove_files(project.root, _generated(project), _MARK) + write.remove_dirs(project.root, _outputs(project))
+
+
+def open_in_vscode(project: config.Project) -> None:
+    """Ouvre le dossier du projet dans VS Code."""
+    vscode.open_folder(project.root)
 
 
 def _outputs(project: config.Project) -> list[str]:
