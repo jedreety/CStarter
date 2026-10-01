@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "lz4"
+  ],
+  "overrides": [
+    { "name": "lz4", "version": "1.10.0" }
+  ],
+  "builtin-baseline": "b8b8df2201ad8509b81a830fe0957bcb98e06c27"
+}

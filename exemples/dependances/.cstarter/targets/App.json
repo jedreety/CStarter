@@ -1,0 +1,90 @@
+{
+  "name": "App",
+  "type": "executable",
+  "subsystem": "console",
+  "standard": "c++20",
+  "c_standard": null,
+  "vcxproj_dir": "build",
+  "public_headers": null,
+  "pch": null,
+  "sources": {
+    "mode": "auto",
+    "dirs": [
+      "App"
+    ],
+    "files": [],
+    "include_dirs": [],
+    "exclude": []
+  },
+  "output": {
+    "bin_dir": "build/bin/App",
+    "obj_dir": "build/obj/App"
+  },
+  "debugger": {
+    "working_dir": "App",
+    "arguments": "",
+    "environment": {}
+  },
+  "configurations": [
+    {
+      "name": "Debug",
+      "optimization": "disabled",
+      "warning_level": "Level4",
+      "runtime_library": "MDd",
+      "debug_info": true,
+      "defines": {
+        "_DEBUG": null
+      },
+      "whole_program_opt": false,
+      "function_level_linking": false,
+      "link_time_code_gen": false,
+      "compiler_options": [
+        "/utf-8",
+        "/wd4251",
+        "/wd4275"
+      ],
+      "linker_options": []
+    },
+    {
+      "name": "Release",
+      "optimization": "max_speed",
+      "warning_level": "Level3",
+      "runtime_library": "MD",
+      "debug_info": true,
+      "defines": {
+        "NDEBUG": null
+      },
+      "whole_program_opt": true,
+      "function_level_linking": true,
+      "link_time_code_gen": false,
+      "compiler_options": [
+        "/utf-8",
+        "/wd4251",
+        "/wd4275"
+      ],
+      "linker_options": []
+    }
+  ],
+  "dependencies": {
+    "Debug": [
+      {
+        "name": "fmt",
+        "version": "12.2.0"
+      },
+      {
+        "name": "spdlog_debug",
+        "version": "1.17.0"
+      }
+    ],
+    "Release": [
+      {
+        "name": "fmt",
+        "version": "12.2.0"
+      },
+      {
+        "name": "spdlog_release",
+        "version": "1.17.0"
+      }
+    ]
+  }
+}

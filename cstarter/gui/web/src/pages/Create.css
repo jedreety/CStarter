@@ -1,0 +1,117 @@
+.create {
+  height: 100%;
+  overflow-y: auto;
+  background:
+    radial-gradient(900px 520px at 78% 0%, rgba(142, 140, 255, 0.08), transparent 70%),
+    radial-gradient(700px 400px at 8% 100%, rgba(94, 200, 255, 0.04), transparent 70%);
+}
+
+.create__page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: calc(var(--titlebar) + 18px) 48px 120px;
+}
+
+.create__back {
+  margin: 0 0 18px -10px;
+}
+
+/* Un long chemin se coupe au début : la fin, le dossier du projet, reste visible */
+.create__pick span {
+  direction: rtl;
+  text-align: left;
+}
+
+.create__files {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 6px 0 4px;
+  color: var(--text-3);
+  list-style: none;
+}
+
+.create__targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px 0;
+}
+
+.create__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+/* Les quatre départs : une icône et son nom, la pastille glisse vers le choix */
+
+.starts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.starts__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 104px;
+  padding: 14px 8px 11px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text-2);
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.starts__item:hover {
+  background: var(--fill-1);
+  color: var(--text);
+}
+
+.starts__item:active {
+  transform: scale(0.97);
+}
+
+.starts__item--on {
+  color: var(--text);
+}
+
+.starts__pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent) inset;
+}
+
+.starts__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  color: var(--text-2);
+  transition: color 140ms ease;
+}
+
+.starts__item--on .starts__icon {
+  color: var(--accent-2);
+}
+
+.starts__label {
+  position: relative;
+  font-size: 12.5px;
+  font-weight: 550;
+}

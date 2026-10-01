@@ -1,0 +1,57 @@
+.toaster {
+  position: fixed;
+  right: 22px;
+  bottom: calc(var(--panel-height, 0px) + var(--unsaved, 0px) + 22px);
+  transition: bottom 320ms var(--ease-out);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 380px;
+  pointer-events: none;
+}
+
+.toaster .swipe-toast {
+  pointer-events: auto;
+}
+
+.toast .swipe-toast__card {
+  align-items: flex-start;
+  padding: 14px 14px 14px 16px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 16px 44px rgba(0, 0, 0, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(24px) saturate(160%);
+}
+
+.toast .swipe-toast__title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.toast .swipe-toast__desc {
+  margin-top: 2px;
+  font-size: 12.5px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.toast .swipe-toast__icon {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.toast-icon--success {
+  color: var(--success);
+}
+
+.toast-icon--danger {
+  color: var(--danger);
+}
+
+.toast-icon--info {
+  color: var(--accent-2);
+}

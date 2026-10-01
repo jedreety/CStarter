@@ -1,0 +1,17 @@
+.libraries {
+  height: 100%;
+  overflow-y: auto;
+  background:
+    radial-gradient(900px 520px at 78% 0%, rgba(142, 140, 255, 0.08), transparent 70%),
+    radial-gradient(700px 400px at 8% 100%, rgba(94, 200, 255, 0.04), transparent 70%);
+}
+
+.libraries__page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: calc(var(--titlebar) + 18px) 48px 120px;
+}
+
+.libraries__back {
+  margin: 0 0 18px -10px;
+}

@@ -1,0 +1,252 @@
+.sheet-layer {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: rgba(4, 4, 6, 0.62);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - 80px);
+  max-height: calc(100vh - 80px);
+  padding: 26px 28px 22px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(34, 34, 40, 0.94) 0%, rgba(22, 22, 26, 0.96) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(30px) saturate(160%);
+}
+
+.sheet__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+}
+
+.sheet__body {
+  min-height: 0;
+  margin-top: 18px;
+  overflow: auto;
+}
+
+.sheet__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.sheet__left {
+  margin-right: auto;
+}
+
+.sheet__paths {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text-2);
+  list-style: none;
+  line-height: 1.8;
+}
+
+.sheet__rows .row {
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.sheet__rows .row:last-child {
+  border-bottom: 0;
+}
+
+.sheet__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sheet__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.sheet__field > label {
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 550;
+}
+
+/* Dans une feuille, un choix segmenté occupe toute la ligne, ses options à parts égales */
+.sheet__field > .segmented {
+  display: flex;
+}
+
+.sheet__field > .segmented .segmented__item {
+  flex: 1;
+}
+
+.sheet__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.prerequisites {
+  display: flex;
+  flex-direction: column;
+}
+
+.prerequisites__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 46px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.prerequisites__row:last-child {
+  border-bottom: 0;
+}
+
+/* Les paramètres d'une dépendance */
+
+.params__title {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.params__version {
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.params {
+  display: flex;
+  flex-direction: column;
+}
+
+.params__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+.params__head .params__filter {
+  width: 220px;
+}
+
+.params__list {
+  max-height: min(56vh, 540px);
+  overflow-y: auto;
+  border-top: 1px solid var(--hairline);
+}
+
+.param {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 54px;
+  padding: 9px 2px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.param:last-child {
+  border-bottom: 0;
+}
+
+.param__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.param__name {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+  transition: color 160ms ease;
+}
+
+.param--changed .param__name {
+  color: var(--accent-2);
+}
+
+.param__description {
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.param__control {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+}
+
+.param__control .param__input {
+  width: 200px;
+  height: 30px;
+}
+
+.params__extra {
+  margin-top: 2px;
+}
+
+.params__notes {
+  margin: 14px 0 0;
+  padding: 10px 14px 10px 30px;
+  border-radius: 10px;
+  background: var(--warning-soft);
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sheet__boxed {
+  padding: 2px 2px 2px 4px;
+  border-radius: var(--radius-m);
+  background: var(--fill-1);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+}
+
+/* Le cadre porte déjà le fond : le champ qu'il contient n'en ajoute pas un second au repos */
+.sheet__boxed .field:not(:hover):not(:focus) {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Les dossiers désignés d'une source, pour les builders manual et none */
+
+.params__folders {
+  border-top: 1px solid var(--hairline);
+}
+
+.params__folders .row {
+  grid-template-columns: 170px minmax(0, 1fr);
+}

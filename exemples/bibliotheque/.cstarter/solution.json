@@ -1,0 +1,29 @@
+{
+  "platforms": [
+    "x64"
+  ],
+  "startup_target": "App",
+  "sln_output": ".",
+  "global_defines": {
+    "PROJECT_VERSION": {
+      "string": "0.1.0"
+    }
+  },
+  "targets": [
+    {
+      "name": "App",
+      "depends_on": [
+        {
+          "target": "Core",
+          "config_mapping": {
+            "Dist": "Release"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Core",
+      "depends_on": []
+    }
+  ]
+}

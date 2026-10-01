@@ -1,0 +1,427 @@
+/* Ce que les pages partagent : listes, textes secondaires, zones d'action. */
+
+.muted {
+  color: var(--text-2);
+}
+
+.faint {
+  color: var(--text-3);
+}
+
+.selectable {
+  user-select: text;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 6px 8px 4px;
+  overflow: hidden;
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  text-align: left;
+}
+
+button.list-row {
+  transition: background-color 140ms ease;
+}
+
+button.list-row:hover {
+  background: linear-gradient(90deg, var(--fill-1), transparent 90%);
+}
+
+.list-row--empty {
+  min-height: 46px;
+  padding-left: 6px;
+  color: var(--text-4);
+}
+
+.list-row--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.list-row__line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.list-row__icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--fill-2);
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--accent-2);
+}
+
+.list-row__title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.list-row__version {
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.list-row__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: color 140ms ease;
+}
+
+.list-row__link:hover {
+  color: var(--accent-2);
+}
+
+.list-row__meta {
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--text-3);
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-row__end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.tabs {
+  margin-top: 28px;
+}
+
+.count {
+  margin-left: 7px;
+  color: var(--text-4);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.segmented__item--on .count {
+  color: var(--text-3);
+}
+
+.danger-zone {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--text);
+}
+
+.banner__text {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.banner__icon {
+  color: var(--danger);
+}
+
+/* Les configurations d'un target : la barre qui les choisit, et les pastilles qui disent où un
+   paquet est lié */
+
+.config-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 26px;
+}
+
+.config-pills {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.config-pill {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--hairline) inset;
+  color: var(--text-4);
+  font-size: 11px;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 120ms var(--ease-out);
+}
+
+.config-pill:hover:not(:disabled) {
+  color: var(--text-2);
+}
+
+.config-pill:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.config-pill--on {
+  background: var(--fill-2);
+  box-shadow: none;
+  color: var(--text-2);
+}
+
+.config-pill--on:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent-2);
+}
+
+.config-pill:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Les dépendances d'un projet : un target par section, sa liste, Ajouter au bas */
+
+.dep-target {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  transition: color 140ms ease;
+}
+
+.dep-target:hover {
+  color: var(--accent-2);
+}
+
+.dep-target__icon {
+  color: var(--accent-2);
+}
+
+/* Une entrée vendorée : son archive est allumée, et un clic la rend au cache */
+.dep-row__vendored svg {
+  color: var(--accent-2);
+}
+
+.add-row.btn {
+  justify-content: flex-start;
+  width: 100%;
+  height: 42px;
+  padding-left: 11px;
+  border-radius: 0;
+  color: var(--text-3);
+}
+
+.add-row.btn:hover:not(:disabled),
+.add-row.btn[aria-expanded='true'] {
+  background: linear-gradient(90deg, var(--fill-1), transparent 90%);
+  color: var(--text);
+}
+
+.mapping {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  padding-left: 42px;
+}
+
+.mapping__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mapping__mine {
+  min-width: 56px;
+  color: var(--text-2);
+}
+
+.mapping__arrow {
+  color: var(--text-4);
+}
+
+/* Les dépendances du projet */
+
+.users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+  margin-left: 8px;
+}
+
+.users__item {
+  height: 22px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill-2);
+  color: var(--text-2);
+  font-size: 11.5px;
+  font-weight: 550;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.users__item:hover {
+  background: var(--fill-3);
+  color: var(--text);
+}
+
+.search {
+  width: 220px;
+}
+
+.entry {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.entry__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 6px 8px 4px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  transition: background-color 140ms ease;
+}
+
+.entry__row:hover {
+  background: linear-gradient(90deg, var(--fill-1), transparent 90%);
+}
+
+.entry__chips {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.entry__chevron {
+  flex: none;
+  color: var(--text-4);
+  transition: transform 260ms var(--ease-out);
+}
+
+.entry__chevron--open {
+  transform: rotate(180deg);
+}
+
+.entry__details {
+  overflow: hidden;
+}
+
+.entry__details .row {
+  grid-template-columns: 170px minmax(0, 1fr);
+  margin-left: 46px;
+}
+
+.entry__details .row:last-child {
+  border-bottom: 0;
+}
+
+.entry__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 6px 16px 46px;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Toutes les configurations côte à côte : une colonne chacune, une rangée par réglage */
+.config-grid {
+  display: grid;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.config-grid__row {
+  display: contents;
+}
+
+.config-grid__head {
+  justify-self: start;
+  margin: 0 0 6px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 140ms ease;
+}
+
+.config-grid__head:hover {
+  background: var(--fill-2);
+}
+
+.config-grid__label,
+.config-grid__cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 46px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--hairline);
+}
+
+.config-grid__label {
+  padding-left: 0;
+  color: var(--text-2);
+  font-size: 13px;
+}

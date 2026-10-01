@@ -1,0 +1,68 @@
+{
+  "fmt@12.2.0": {
+    "nature": "header_only",
+    "resolvable": true,
+    "source": {
+      "type": "github",
+      "url": "https://github.com/fmtlib/fmt",
+      "tag": "12.2.0",
+      "commit": "1be298e1bd68957e4cd352e1f676f00e07dcfb57",
+      "sha256": "8d964cf2f9682694736efbd7791c16bb4849ed484c270a29d14aa8865183e26f"
+    },
+    "build": {
+      "system": "none",
+      "flags": [],
+      "platforms": []
+    }
+  },
+  "spdlog_debug@1.17.0": {
+    "nature": "dynamic_lib",
+    "resolvable": true,
+    "source": {
+      "type": "github",
+      "url": "https://github.com/gabime/spdlog",
+      "tag": "v1.17.0",
+      "commit": "79524ddd08a4ec981b7fea76afd08ee05f83755d",
+      "sha256": "2d6e0db3730a2cd847bf3f08f4b8c16d8bf8c95ab65fb34576b96d767dce5fdc"
+    },
+    "build": {
+      "system": "cmake",
+      "flags": [
+        "-DSPDLOG_BUILD_SHARED=ON",
+        "-DSPDLOG_USE_STD_FORMAT=ON",
+        "-DSPDLOG_BUILD_EXAMPLE=OFF"
+      ],
+      "platforms": [
+        "ARM64",
+        "x64"
+      ],
+      "runtime": "MDd",
+      "toolset": "v143"
+    }
+  },
+  "spdlog_release@1.17.0": {
+    "nature": "dynamic_lib",
+    "resolvable": true,
+    "source": {
+      "type": "github",
+      "url": "https://github.com/gabime/spdlog",
+      "tag": "v1.17.0",
+      "commit": "79524ddd08a4ec981b7fea76afd08ee05f83755d",
+      "sha256": "2d6e0db3730a2cd847bf3f08f4b8c16d8bf8c95ab65fb34576b96d767dce5fdc"
+    },
+    "build": {
+      "system": "cmake",
+      "flags": [
+        "-DSPDLOG_BUILD_SHARED=ON",
+        "-DSPDLOG_USE_STD_FORMAT=ON",
+        "-DSPDLOG_BUILD_EXAMPLE=OFF"
+      ],
+      "platforms": [
+        "ARM64",
+        "x64"
+      ],
+      "runtime": "MD",
+      "toolset": "v143"
+    }
+  }
+}

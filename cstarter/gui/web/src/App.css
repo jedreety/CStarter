@@ -1,0 +1,92 @@
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background:
+    radial-gradient(1100px 520px at 82% -8%, rgba(142, 140, 255, 0.075), transparent 62%),
+    radial-gradient(900px 480px at -10% 110%, rgba(94, 200, 255, 0.035), transparent 60%),
+    var(--bg);
+}
+
+.app__main {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.app__screen {
+  position: absolute;
+  inset: 0;
+}
+
+/* Les bords de la fenêtre sans cadre : invisibles, ils portent le curseur de redimensionnement. */
+
+.edge {
+  position: fixed;
+  z-index: 1000;
+}
+
+.edge--top,
+.edge--bottom {
+  left: 8px;
+  right: 8px;
+  height: 5px;
+  cursor: ns-resize;
+}
+
+.edge--top {
+  top: 0;
+}
+
+.edge--bottom {
+  bottom: 0;
+}
+
+.edge--left,
+.edge--right {
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  cursor: ew-resize;
+}
+
+.edge--left {
+  left: 0;
+}
+
+.edge--right {
+  right: 0;
+}
+
+.edge--topleft,
+.edge--topright,
+.edge--bottomleft,
+.edge--bottomright {
+  width: 10px;
+  height: 10px;
+}
+
+.edge--topleft {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+.edge--topright {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.edge--bottomleft {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.edge--bottomright {
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
